@@ -2,10 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.application import JobApplication, CrewInquiry, ApplicationStatus
 from app.models.listing import JobPosting, CrewListing
-from app.schemas.application import (
-    JobApplicationCreate, JobApplicationUpdate,
-    CrewInquiryCreate, CrewInquiryUpdate,
-)
+from app.schemas.application import JobApplicationCreate, CrewInquiryCreate
 
 
 # ── JobApplication ───────────────────────────────────────────────────────────
@@ -82,16 +79,16 @@ def list_applications_for_owner(
     return query.order_by(JobApplication.created_at.desc()).all()
 
 
-# Updates the status of a job application (owner accepts or rejects). Returns None if not found.
-def update_application_status(
+# Sets the status of a job application to accepted or rejected. Returns None if not found.
+def set_application_status(
     db: Session,
     application_id: int,
-    data: JobApplicationUpdate,
+    new_status: ApplicationStatus,
 ) -> JobApplication | None:
     db_application = get_job_application(db, application_id)
     if not db_application:
         return None
-    db_application.status = data.status
+    db_application.status = new_status
     db.commit()
     db.refresh(db_application)
     return db_application
@@ -180,16 +177,16 @@ def list_inquiries_for_crew_member(
     return query.order_by(CrewInquiry.created_at.desc()).all()
 
 
-# Updates the status of a crew inquiry (crew member accepts or rejects). Returns None if not found.
-def update_inquiry_status(
+# Sets the status of a crew inquiry to accepted or rejected. Returns None if not found.
+def set_inquiry_status(
     db: Session,
     inquiry_id: int,
-    data: CrewInquiryUpdate,
+    new_status: ApplicationStatus,
 ) -> CrewInquiry | None:
     db_inquiry = get_crew_inquiry(db, inquiry_id)
     if not db_inquiry:
         return None
-    db_inquiry.status = data.status
+    db_inquiry.status = new_status
     db.commit()
     db.refresh(db_inquiry)
     return db_inquiry
