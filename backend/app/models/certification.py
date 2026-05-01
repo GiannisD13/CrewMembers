@@ -9,7 +9,7 @@ class Certification(Base):
     __tablename__ = "certifications"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    crew_member_id = Column(String, ForeignKey("crew_members.user_id"), nullable=False)
+    crew_member_id = Column(String, ForeignKey("crew_members.user_id", ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
     issuing_authority = Column(String, nullable=True)
     issue_date = Column(Date, nullable=True)
