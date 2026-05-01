@@ -48,7 +48,7 @@ class User(Base):
 class YachtOwner(Base):
     __tablename__ = "yacht_owners"
 
-    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     company_name = Column(String, nullable=True)
     description = Column(Text, nullable=True)
     location = Column(String, nullable=True)
@@ -64,7 +64,7 @@ class YachtOwner(Base):
 class CrewMember(Base):
     __tablename__ = "crew_members"
 
-    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     roles = Column(ARRAY(String), nullable=False)
     experience_years = Column(Integer, nullable=True)
     location = Column(String, nullable=True)
