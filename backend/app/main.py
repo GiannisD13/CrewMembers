@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1 import (
     applications,
@@ -8,6 +11,7 @@ from app.api.v1 import (
     certifications,
     listings,
     messages,
+    uploads,
     users,
 )
 
@@ -42,3 +46,9 @@ app.include_router(listings.router, prefix=API_PREFIX, tags=["listings"])
 app.include_router(applications.router, prefix=API_PREFIX, tags=["applications"])
 app.include_router(messages.router, prefix=API_PREFIX, tags=["messages"])
 app.include_router(certifications.router, prefix=f"{API_PREFIX}/certifications", tags=["certifications"])
+app.include_router(uploads.router, prefix=f"{API_PREFIX}/uploads", tags=["uploads"])
+
+# Serve uploaded files. Must be mounted after all routers.
+_UPLOADS_DIR = Path(__file__).resolve().parent.parent / "uploads"
+_UPLOADS_DIR.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(_UPLOADS_DIR)), name="uploads")

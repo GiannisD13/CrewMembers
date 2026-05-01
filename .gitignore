@@ -20,6 +20,9 @@ dist/
 .env.*.local
 backend/.env
 
+# Uploaded files
+backend/uploads/
+
 # Logs
 *.log
 npm-debug.log*
