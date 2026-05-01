@@ -28,11 +28,6 @@ def delete_user(db: Session, user_id: str) -> bool:
     db_user = get_user_by_id(db, user_id)
     if not db_user:
         return False
-    # Delete child profile first to avoid FK constraint error
-    if db_user.yacht_owner:
-        db.delete(db_user.yacht_owner)
-    if db_user.crew_member:
-        db.delete(db_user.crew_member)
     db.delete(db_user)
     db.commit()
     return True
