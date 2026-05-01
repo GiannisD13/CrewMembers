@@ -10,7 +10,7 @@ class JobPosting(Base):
     __tablename__ = "job_postings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    owner_id = Column(String, ForeignKey("yacht_owners.user_id"), nullable=False)
+    owner_id = Column(String, ForeignKey("yacht_owners.user_id", ondelete="CASCADE"), nullable=False)
     schedule_id = Column(Integer, ForeignKey("availability_schedules.id"), nullable=False)
     title = Column(String, nullable=False, index=True)
     role = Column(Enum(CrewRole), nullable=False)
@@ -32,7 +32,7 @@ class JobPostingMedia(Base):
     __tablename__ = "job_posting_media"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    jobposting_id = Column(Integer, ForeignKey("job_postings.id"), nullable=False)
+    jobposting_id = Column(Integer, ForeignKey("job_postings.id", ondelete="CASCADE"), nullable=False)
     url = Column(String, nullable=False)
     order = Column(Integer, nullable=False, default=0)
 
@@ -44,7 +44,7 @@ class CrewListing(Base):
     __tablename__ = "crew_listings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    crew_member_id = Column(String, ForeignKey("crew_members.user_id"), nullable=False)
+    crew_member_id = Column(String, ForeignKey("crew_members.user_id", ondelete="CASCADE"), nullable=False)
     schedule_id = Column(Integer, ForeignKey("availability_schedules.id"), nullable=False)
     title = Column(String, nullable=False, index=True)
     role = Column(Enum(CrewRole), nullable=False)
