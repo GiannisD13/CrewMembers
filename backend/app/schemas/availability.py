@@ -26,6 +26,7 @@ class AvailabilityScheduleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    owner_user_id: str
     availability_type: AvailabilityType
     start_date: Optional[date]
     end_date: Optional[date]

@@ -24,9 +24,9 @@ router = APIRouter()
 def post_schedule(
     data: AvailabilityScheduleCreate,
     db: Session = Depends(get_db),
-    _: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    return create_schedule(db, data)
+    return create_schedule(db, data, owner_user_id=current_user.id)
 
 
 # Returns the schedule with the given id.
@@ -42,27 +42,33 @@ def read_schedule(
     return schedule
 
 
-# Updates the fields of an existing schedule.
+# Updates the fields of an existing schedule. Only the owner can mutate.
 @router.patch("/{schedule_id}", response_model=AvailabilityScheduleResponse)
 def patch_schedule(
     schedule_id: int,
     data: AvailabilityScheduleUpdate,
     db: Session = Depends(get_db),
-    _: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    schedule = update_schedule(db, schedule_id, data)
-    if not schedule:
+    existing = get_schedule(db, schedule_id)
+    if not existing:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
-    return schedule
+    if existing.owner_user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not the schedule owner")
+    return update_schedule(db, schedule_id, data)
 
 
-# Deletes a schedule by id.
+# Deletes a schedule by id. Only the owner can delete.
 @router.delete("/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_schedule(
     schedule_id: int,
     db: Session = Depends(get_db),
-    _: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    if not delete_schedule(db, schedule_id):
+    existing = get_schedule(db, schedule_id)
+    if not existing:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+    if existing.owner_user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not the schedule owner")
+    delete_schedule(db, schedule_id)
     return None

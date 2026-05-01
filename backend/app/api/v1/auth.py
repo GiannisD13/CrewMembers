@@ -10,9 +10,15 @@ from app.crud.user import (
     create_crew_member,
     get_user_by_email,
 )
-from app.models.user import AccountType
+from app.models.user import AccountType, User
 from app.schemas.auth import TokenResponse
 from app.schemas.user import UserCreate, CrewMemberCreate
+
+
+def _phone_taken(db: Session, phone: str | None) -> bool:
+    if phone is None:
+        return False
+    return db.query(User).filter(User.phone == phone).first() is not None
 
 router = APIRouter()
 
@@ -51,6 +57,11 @@ def register_owner(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
+    if _phone_taken(db, data.phone):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Phone already registered",
+        )
 
     owner = create_owner(db, data, hash_password(data.password))
     token = create_access_token(data={"sub": owner.user_id})
@@ -75,6 +86,11 @@ def register_crew(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
+        )
+    if _phone_taken(db, user_data.phone):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Phone already registered",
         )
 
     crew = create_crew_member(db, user_data, crew_data, hash_password(user_data.password))

@@ -32,7 +32,7 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    phone = Column(String, nullable=True)
+    phone = Column(String, unique=True, index=True, nullable=True)
     photo_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)

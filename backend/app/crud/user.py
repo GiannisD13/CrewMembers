@@ -12,7 +12,7 @@ def get_user_by_id(db: Session, user_id: str) -> User | None:
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
-    return db.query(User).filter(User.email == email).first()
+    return db.query(User).filter(User.email == email.strip().lower()).first()
 
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:
@@ -50,7 +50,9 @@ def update_user(db: Session, user_id: str, data: UserUpdate) -> User | None:
 
     update_data = data.model_dump(exclude_unset=True)
 
-    if "phone" in update_data:
+    # Only check uniqueness when a non-null phone is actually being set.
+    # Comparing `phone == None` would match all phone-less users → spurious 409.
+    if update_data.get("phone") is not None:
         existing = db.query(User).filter(User.phone == update_data["phone"]).first()
         if existing and existing.id != user_id:
             raise ValueError(f"Phone '{update_data['phone']}' already in use")

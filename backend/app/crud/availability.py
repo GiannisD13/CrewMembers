@@ -4,9 +4,14 @@ from app.models.availability import AvailabilitySchedule
 from app.schemas.availability import AvailabilityScheduleCreate, AvailabilityScheduleUpdate
 
 
-# Creates a new availability schedule and returns it.
-def create_schedule(db: Session, data: AvailabilityScheduleCreate) -> AvailabilitySchedule:
+# Creates a new availability schedule owned by `owner_user_id` and returns it.
+def create_schedule(
+    db: Session,
+    data: AvailabilityScheduleCreate,
+    owner_user_id: str,
+) -> AvailabilitySchedule:
     db_schedule = AvailabilitySchedule(
+        owner_user_id=owner_user_id,
         availability_type=data.availability_type,
         start_date=data.start_date,
         end_date=data.end_date,
