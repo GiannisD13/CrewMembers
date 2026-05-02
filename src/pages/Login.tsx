@@ -1,14 +1,34 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { api, ApiError } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
+  const navigate = useNavigate()
+  const { saveToken } = useAuth()
+
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw]     = useState(false)
+  const [error, setError]       = useState<string | null>(null)
+  const [loading, setLoading]   = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: connect to auth API
+    setError(null)
+    setLoading(true)
+    try {
+      const res = await api.postForm<{ access_token: string; token_type: string }>(
+        '/api/v1/auth/login',
+        { username: email, password },
+      )
+      const user = await saveToken(res.access_token)
+      navigate(user.account_type === 'owner' ? '/dashboard/owner' : '/dashboard/crew', { replace: true })
+    } catch (err) {
+      setError((err as ApiError).detail ?? 'Login failed. Please check your credentials.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -16,7 +36,6 @@ export default function Login() {
 
       {/* Left panel — branding */}
       <div className="hidden lg:flex flex-col justify-between w-[45%] bg-navy-light border-r border-white/5 p-12 relative overflow-hidden">
-        {/* Background radial */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(196,151,58,0.06) 0%, transparent 65%)' }} />
 
@@ -45,7 +64,6 @@ export default function Login() {
       {/* Right panel — form */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
 
-        {/* Mobile logo */}
         <Link to="/" className="lg:hidden font-display text-xl font-bold text-cream tracking-wide mb-10">
           Crew<span className="text-gold">Deck</span>
         </Link>
@@ -54,8 +72,13 @@ export default function Login() {
           <h1 className="font-display text-2xl font-semibold text-cream mb-1.5">Welcome back</h1>
           <p className="text-sm text-cream/40 mb-8">Sign in to your account to continue.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+              {error}
+            </div>
+          )}
 
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-1.5">Email address</label>
               <input
@@ -106,9 +129,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-gold text-navy font-semibold text-sm py-3 rounded-xl hover:bg-gold-light transition-colors mt-2"
+              disabled={loading}
+              className="w-full bg-gold text-navy font-semibold text-sm py-3 rounded-xl hover:bg-gold-light transition-colors mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Sign in
+              {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
 

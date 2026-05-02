@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const location = useLocation()
-  const isDark = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/register'
+  const [scrolled, setScrolled]   = useState(false)
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const location  = useLocation()
+  const navigate  = useNavigate()
+  const { user, logout } = useAuth()
+
+  const isDark =
+    location.pathname === '/' ||
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname.startsWith('/dashboard')
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40)
@@ -19,6 +27,12 @@ export default function Navbar() {
 
   const textColor = isDark ? 'text-cream/70 hover:text-cream' : 'text-navy/60 hover:text-navy'
   const logoColor = isDark ? 'text-cream' : 'text-navy'
+
+  const handleLogout = () => {
+    logout()
+    setMenuOpen(false)
+    navigate('/')
+  }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
@@ -50,18 +64,37 @@ export default function Navbar() {
 
         {/* Auth buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            to="/login"
-            className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${textColor}`}
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/register"
-            className="text-sm font-semibold px-5 py-2 rounded-lg bg-gold text-navy hover:bg-gold-light transition-colors"
-          >
-            Join Free
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to={`/dashboard/${user.account_type}`}
+                className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${textColor}`}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-sm font-semibold px-5 py-2 rounded-lg bg-white/8 text-cream/70 hover:bg-white/12 hover:text-cream transition-colors"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${textColor}`}
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                className="text-sm font-semibold px-5 py-2 rounded-lg bg-gold text-navy hover:bg-gold-light transition-colors"
+              >
+                Join Free
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -85,8 +118,25 @@ export default function Navbar() {
           <Link to="/browse?tab=jobs" className="text-cream/70 text-sm font-medium" onClick={() => setMenuOpen(false)}>Open Positions</Link>
           <Link to="/browse?tab=crew" className="text-cream/70 text-sm font-medium" onClick={() => setMenuOpen(false)}>Available Crew</Link>
           <hr className="border-white/10" />
-          <Link to="/login" className="text-cream/70 text-sm font-medium" onClick={() => setMenuOpen(false)}>Sign in</Link>
-          <Link to="/register" className="text-sm font-semibold px-5 py-2.5 rounded-lg bg-gold text-navy text-center" onClick={() => setMenuOpen(false)}>Join Free</Link>
+          {user ? (
+            <>
+              <Link
+                to={`/dashboard/${user.account_type}`}
+                className="text-cream/70 text-sm font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <button onClick={handleLogout} className="text-sm font-semibold px-5 py-2.5 rounded-lg bg-white/8 text-cream/70 text-center">
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-cream/70 text-sm font-medium" onClick={() => setMenuOpen(false)}>Sign in</Link>
+              <Link to="/register" className="text-sm font-semibold px-5 py-2.5 rounded-lg bg-gold text-navy text-center" onClick={() => setMenuOpen(false)}>Join Free</Link>
+            </>
+          )}
         </div>
       )}
     </nav>
