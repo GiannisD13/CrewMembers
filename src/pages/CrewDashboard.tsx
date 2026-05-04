@@ -146,8 +146,8 @@ export default function CrewDashboard() {
   const initials = user ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase() : '?'
 
   return (
-    <div className="min-h-screen bg-navy pt-16">
-      <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
+    <div className="px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
+      <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Profile header card */}
         <div className="bg-navy-light border border-white/8 rounded-2xl p-6">

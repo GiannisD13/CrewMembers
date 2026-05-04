@@ -1,0 +1,358 @@
+import { useState, useEffect } from 'react'
+import { api, ApiError } from '../lib/api'
+
+interface NewListingModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSuccess: () => void
+  type: 'job' | 'crew'
+}
+
+const CREW_ROLES = [
+  { value: 'captain',    label: 'Captain' },
+  { value: 'first_mate', label: 'First Mate' },
+  { value: 'chef',       label: 'Chef / Cook' },
+  { value: 'engineer',   label: 'Engineer' },
+  { value: 'sailor',     label: 'Sailor' },
+  { value: 'steward',    label: 'Steward / Stewardess' },
+  { value: 'deckhand',   label: 'Deckhand' },
+]
+
+const AVAILABILITY_TYPES = [
+  { value: 'permanent', label: 'Permanent', desc: 'Ongoing position' },
+  { value: 'seasonal',  label: 'Seasonal',  desc: 'Tied to a season' },
+  { value: 'temporary', label: 'Temporary', desc: 'Specific date range' },
+  { value: 'custom',    label: 'Custom',    desc: 'Recurring days or specific dates' },
+]
+
+const WEEKDAYS = [
+  { value: 0, label: 'Mon' },
+  { value: 1, label: 'Tue' },
+  { value: 2, label: 'Wed' },
+  { value: 3, label: 'Thu' },
+  { value: 4, label: 'Fri' },
+  { value: 5, label: 'Sat' },
+  { value: 6, label: 'Sun' },
+]
+
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
+
+const initialForm = {
+  title: '',
+  role: '',
+  description: '',
+  location: '',
+  salary: '',
+  // schedule
+  availability_type: 'permanent',
+  start_date: '',
+  end_date: '',
+  recurring_days: [] as number[],
+  one_off_dates: [] as string[],
+}
+
+export default function NewListingModal({ isOpen, onClose, onSuccess, type }: NewListingModalProps) {
+  const [form, setForm] = useState(initialForm)
+  const [oneOffInput, setOneOffInput] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  // Reset form whenever modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setForm(initialForm)
+      setOneOffInput('')
+      setError(null)
+    }
+  }, [isOpen])
+
+  // Lock body scroll while open
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [isOpen])
+
+  const toggleDay = (day: number) =>
+    setForm(p => ({
+      ...p,
+      recurring_days: p.recurring_days.includes(day)
+        ? p.recurring_days.filter(d => d !== day)
+        : [...p.recurring_days, day].sort((a, b) => a - b),
+    }))
+
+  const addOneOffDate = () => {
+    if (oneOffInput && !form.one_off_dates.includes(oneOffInput)) {
+      setForm(p => ({ ...p, one_off_dates: [...p.one_off_dates, oneOffInput].sort() }))
+      setOneOffInput('')
+    }
+  }
+
+  const removeOneOffDate = (date: string) =>
+    setForm(p => ({ ...p, one_off_dates: p.one_off_dates.filter(d => d !== date) }))
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.title.trim()) { setError('Title is required.'); return }
+    if (!form.role) { setError('Please select a role.'); return }
+
+    setError(null)
+    setLoading(true)
+    try {
+      // 1) Create availability schedule first
+      const schedulePayload: Record<string, unknown> = {
+        availability_type: form.availability_type,
+      }
+      if (form.start_date)             schedulePayload.start_date     = form.start_date
+      if (form.end_date)               schedulePayload.end_date       = form.end_date
+      if (form.recurring_days.length)  schedulePayload.recurring_days = form.recurring_days
+      if (form.one_off_dates.length)   schedulePayload.one_off_dates  = form.one_off_dates
+
+      const schedule = await api.post<{ id: number }>('/api/v1/availability-schedules/', schedulePayload)
+
+      // 2) Create listing/posting referencing the schedule
+      const listingPayload: Record<string, unknown> = {
+        schedule_id: schedule.id,
+        title:       form.title.trim(),
+        role:        form.role,
+      }
+      if (form.description.trim()) listingPayload.description = form.description.trim()
+      if (form.location.trim())    listingPayload.location    = form.location.trim()
+      if (type === 'job' && form.salary.trim()) {
+        listingPayload.salary = Number(form.salary)
+      }
+
+      const path = type === 'job' ? '/api/v1/job-postings' : '/api/v1/crew-listings'
+      await api.post(path, listingPayload)
+
+      onSuccess()
+      onClose()
+    } catch (err) {
+      setError((err as ApiError).detail ?? 'Failed to create listing.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div
+      className={`fixed inset-0 z-[60] transition-opacity duration-300 ${
+        isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div onClick={onClose} className="absolute inset-0 bg-navy/80 backdrop-blur-md" />
+
+      {/* Modal */}
+      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-2xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/8 flex-shrink-0">
+          <div>
+            <h2 className="font-display text-xl font-semibold text-cream">
+              New {type === 'job' ? 'Job Posting' : 'Crew Listing'}
+            </h2>
+            <p className="text-xs text-cream/40 mt-0.5">
+              {type === 'job' ? 'Find the right crew for your vessel.' : 'Showcase your availability to yacht owners.'}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 -mr-2 text-cream/40 hover:text-cream/70 transition-colors"
+            aria-label="Close"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6 space-y-7">
+
+          {/* Basic info */}
+          <section className="space-y-4">
+            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Listing Details</h3>
+
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-1.5">Title <span className="text-red-400">*</span></label>
+              <input type="text" required value={form.title}
+                onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
+                placeholder={type === 'job' ? 'e.g. Captain for summer charter' : 'e.g. Experienced Captain available'}
+                className={inputCls} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-1.5">Role <span className="text-red-400">*</span></label>
+              <select required value={form.role}
+                onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
+                className={`${inputCls} appearance-none cursor-pointer`}>
+                <option value="" disabled>Select a role…</option>
+                {CREW_ROLES.map(r => (
+                  <option key={r.value} value={r.value} className="bg-navy-mid">{r.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-1.5">Description</label>
+              <textarea value={form.description}
+                onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+                rows={4}
+                placeholder={type === 'job' ? 'Vessel details, expectations, requirements…' : 'Your skills, experience, what you bring on board…'}
+                className={`${inputCls} resize-none`} />
+            </div>
+
+            <div className={type === 'job' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : ''}>
+              <div>
+                <label className="block text-xs font-medium text-cream/60 mb-1.5">Location</label>
+                <input type="text" value={form.location}
+                  onChange={e => setForm(p => ({ ...p, location: e.target.value }))}
+                  placeholder="e.g. Athens, Greece" className={inputCls} />
+              </div>
+
+              {type === 'job' && (
+                <div>
+                  <label className="block text-xs font-medium text-cream/60 mb-1.5">
+                    Salary <span className="text-cream/25">(monthly, EUR)</span>
+                  </label>
+                  <input type="number" min="0" step="50" value={form.salary}
+                    onChange={e => setForm(p => ({ ...p, salary: e.target.value }))}
+                    placeholder="e.g. 4500" className={inputCls} />
+                </div>
+              )}
+            </div>
+          </section>
+
+          <hr className="border-white/8" />
+
+          {/* Schedule */}
+          <section className="space-y-4">
+            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Availability</h3>
+
+            {/* Type */}
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-2">Type <span className="text-red-400">*</span></label>
+              <div className="grid grid-cols-2 gap-2">
+                {AVAILABILITY_TYPES.map(t => (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, availability_type: t.value }))}
+                    className={`text-left p-3 rounded-xl border transition-all ${
+                      form.availability_type === t.value
+                        ? 'bg-gold/15 border-gold/50 text-gold'
+                        : 'bg-white/5 border-white/10 text-cream/55 hover:border-white/25'
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">{t.label}</p>
+                    <p className="text-[11px] opacity-70 mt-0.5">{t.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Date range */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-cream/60 mb-1.5">Start date</label>
+                <input type="date" value={form.start_date}
+                  onChange={e => setForm(p => ({ ...p, start_date: e.target.value }))}
+                  className={`${inputCls} [color-scheme:dark]`} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-cream/60 mb-1.5">End date</label>
+                <input type="date" value={form.end_date}
+                  onChange={e => setForm(p => ({ ...p, end_date: e.target.value }))}
+                  className={`${inputCls} [color-scheme:dark]`} />
+              </div>
+            </div>
+
+            {/* Recurring days */}
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-2">
+                Recurring days <span className="text-cream/25">(optional)</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {WEEKDAYS.map(d => (
+                  <button
+                    key={d.value}
+                    type="button"
+                    onClick={() => toggleDay(d.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                      form.recurring_days.includes(d.value)
+                        ? 'bg-gold/15 border-gold/50 text-gold'
+                        : 'bg-white/5 border-white/10 text-cream/50 hover:border-white/25'
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* One-off dates */}
+            <div>
+              <label className="block text-xs font-medium text-cream/60 mb-2">
+                One-off dates <span className="text-cream/25">(optional)</span>
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input type="date" value={oneOffInput}
+                  onChange={e => setOneOffInput(e.target.value)}
+                  className={`${inputCls} [color-scheme:dark] flex-1`} />
+                <button
+                  type="button"
+                  onClick={addOneOffDate}
+                  disabled={!oneOffInput}
+                  className="px-4 rounded-xl bg-gold/15 border border-gold/30 text-gold text-sm font-semibold hover:bg-gold/25 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Add
+                </button>
+              </div>
+              {form.one_off_dates.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {form.one_off_dates.map(date => (
+                    <span key={date} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-cream/70">
+                      {date}
+                      <button type="button" onClick={() => removeOneOffDate(date)} className="text-cream/40 hover:text-red-400 transition-colors">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {error && (
+            <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+        </form>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/8 bg-navy-mid flex-shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium text-cream/60 hover:text-cream hover:bg-white/5 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Creating…' : 'Create listing'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
