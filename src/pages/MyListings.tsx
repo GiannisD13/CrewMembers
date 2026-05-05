@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { api, ApiError } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import NewListingModal from '../components/NewListingModal'
+import ListingDetailModal from '../components/ListingDetailModal'
 
 interface BaseListing {
   id: number
@@ -42,6 +43,7 @@ export default function MyListings() {
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
+  const [selected, setSelected] = useState<Listing | null>(null)
 
   const path = isOwner ? '/api/v1/job-postings/mine' : '/api/v1/crew-listings/mine'
   const itemBase = isOwner ? '/api/v1/job-postings' : '/api/v1/crew-listings'
@@ -130,8 +132,9 @@ export default function MyListings() {
           {listings.map(item => (
             <article
               key={item.id}
-              className={`relative bg-navy-light border rounded-2xl p-5 transition-all ${
-                item.is_active ? 'border-white/10 hover:border-gold/30' : 'border-white/5 opacity-60'
+              onClick={() => setSelected(item)}
+              className={`relative bg-navy-light border rounded-2xl p-5 transition-all cursor-pointer ${
+                item.is_active ? 'border-white/10 hover:border-gold/30' : 'border-white/5 opacity-60 hover:opacity-80'
               }`}
             >
 
@@ -185,7 +188,10 @@ export default function MyListings() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-3 border-t border-white/5">
+              <div
+                className="flex items-center gap-2 pt-3 border-t border-white/5"
+                onClick={e => e.stopPropagation()}
+              >
                 <button
                   onClick={() => toggleActive(item.id, item.is_active)}
                   className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-white/5 text-cream/70 hover:bg-white/10 hover:text-cream transition-colors"
@@ -211,6 +217,14 @@ export default function MyListings() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSuccess={refresh}
+        type={isOwner ? 'job' : 'crew'}
+      />
+
+      <ListingDetailModal
+        isOpen={!!selected}
+        onClose={() => setSelected(null)}
+        onChange={refresh}
+        listing={selected}
         type={isOwner ? 'job' : 'crew'}
       />
     </div>

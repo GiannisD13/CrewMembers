@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import BrowseListingModal from '../components/BrowseListingModal'
 
 interface BaseListing {
   id: number
@@ -46,6 +47,7 @@ export default function Browse() {
 
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<Listing | null>(null)
 
   // Server-applied filters (backend supports)
   const [role, setRole]         = useState('')
@@ -195,6 +197,7 @@ export default function Browse() {
             {filtered.map(item => (
               <article
                 key={item.id}
+                onClick={() => setSelected(item)}
                 className="bg-navy-light border border-white/10 rounded-2xl p-5 hover:border-gold/30 hover:shadow-[0_0_30px_rgba(196,151,58,0.08)] transition-all cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-3">
@@ -234,6 +237,13 @@ export default function Browse() {
           </div>
         )}
       </div>
+
+      <BrowseListingModal
+        isOpen={!!selected}
+        onClose={() => setSelected(null)}
+        listing={selected}
+        type={isCrewUser ? 'job' : 'crew'}
+      />
     </div>
   )
 }
