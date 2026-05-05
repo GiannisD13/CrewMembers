@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { api, ApiError } from '../lib/api'
 
 interface NewListingModalProps {
@@ -43,7 +43,6 @@ const initialForm = {
   description: '',
   location: '',
   salary: '',
-  // schedule
   availability_type: 'permanent',
   start_date: '',
   end_date: '',
@@ -51,22 +50,26 @@ const initialForm = {
   one_off_dates: [] as string[],
 }
 
+interface PhotoItem { file: File; preview: string }
+
 export default function NewListingModal({ isOpen, onClose, onSuccess, type }: NewListingModalProps) {
   const [form, setForm] = useState(initialForm)
   const [oneOffInput, setOneOffInput] = useState('')
+  const [photos, setPhotos] = useState<PhotoItem[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
 
-  // Reset form whenever modal closes
   useEffect(() => {
     if (!isOpen) {
       setForm(initialForm)
       setOneOffInput('')
       setError(null)
+      photos.forEach(p => URL.revokeObjectURL(p.preview))
+      setPhotos([])
     }
   }, [isOpen])
 
-  // Lock body scroll while open
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -90,6 +93,24 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
   const removeOneOffDate = (date: string) =>
     setForm(p => ({ ...p, one_off_dates: p.one_off_dates.filter(d => d !== date) }))
 
+  const handleFiles = (files: FileList | null) => {
+    if (!files || !files.length) return
+    const items: PhotoItem[] = []
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue
+      items.push({ file, preview: URL.createObjectURL(file) })
+    }
+    setPhotos(p => [...p, ...items])
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const removePhoto = (idx: number) => {
+    setPhotos(p => {
+      URL.revokeObjectURL(p[idx].preview)
+      return p.filter((_, i) => i !== idx)
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title.trim()) { setError('Title is required.'); return }
@@ -98,7 +119,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
     setError(null)
     setLoading(true)
     try {
-      // 1) Create availability schedule first
       const schedulePayload: Record<string, unknown> = {
         availability_type: form.availability_type,
       }
@@ -109,7 +129,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
 
       const schedule = await api.post<{ id: number }>('/api/v1/availability-schedules/', schedulePayload)
 
-      // 2) Create listing/posting referencing the schedule
       const listingPayload: Record<string, unknown> = {
         schedule_id: schedule.id,
         title:       form.title.trim(),
@@ -122,7 +141,19 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
       }
 
       const path = type === 'job' ? '/api/v1/job-postings' : '/api/v1/crew-listings'
-      await api.post(path, listingPayload)
+      const created = await api.post<{ id: number }>(path, listingPayload)
+
+      // Upload photos for job postings
+      if (type === 'job' && photos.length) {
+        for (let i = 0; i < photos.length; i++) {
+          try {
+            const { url } = await api.postFile<{ url: string }>('/api/v1/uploads/posting-media', photos[i].file)
+            await api.post(`/api/v1/job-postings/${created.id}/media`, { url, order: i })
+          } catch {
+            // continue with remaining photos; user can add later from edit
+          }
+        }
+      }
 
       onSuccess()
       onClose()
@@ -141,13 +172,10 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
       <div onClick={onClose} className="absolute inset-0 bg-navy/80 backdrop-blur-md" />
 
-      {/* Modal */}
       <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-2xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
 
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/8 flex-shrink-0">
           <div>
             <h2 className="font-display text-xl font-semibold text-cream">
@@ -168,10 +196,8 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
           </button>
         </div>
 
-        {/* Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6 space-y-7">
 
-          {/* Basic info */}
           <section className="space-y-4">
             <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Listing Details</h3>
 
@@ -225,13 +251,61 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
             </div>
           </section>
 
+          {/* Photos (job only) */}
+          {type === 'job' && (
+            <>
+              <hr className="border-white/8" />
+              <section className="space-y-3">
+                <div>
+                  <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Vessel Photos</h3>
+                  <p className="text-xs text-cream/35 mt-1">JPG, PNG or WebP — up to 5 MB each.</p>
+                </div>
+
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {photos.map((p, i) => (
+                    <div key={p.preview} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                      <img src={p.preview} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(i)}
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-navy/80 text-cream/80 hover:text-red-400 transition-colors flex items-center justify-center backdrop-blur-sm"
+                        aria-label="Remove"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="aspect-square rounded-xl border-2 border-dashed border-white/15 hover:border-gold/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-1 text-cream/40 hover:text-gold"
+                  >
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="text-[11px] font-medium">Add photos</span>
+                  </button>
+                </div>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  hidden
+                  onChange={e => handleFiles(e.target.files)}
+                />
+              </section>
+            </>
+          )}
+
           <hr className="border-white/8" />
 
-          {/* Schedule */}
           <section className="space-y-4">
             <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Availability</h3>
 
-            {/* Type */}
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-2">Type <span className="text-red-400">*</span></label>
               <div className="grid grid-cols-2 gap-2">
@@ -253,7 +327,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
               </div>
             </div>
 
-            {/* Date range */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-cream/60 mb-1.5">Start date</label>
@@ -269,7 +342,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
               </div>
             </div>
 
-            {/* Recurring days */}
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-2">
                 Recurring days <span className="text-cream/25">(optional)</span>
@@ -292,7 +364,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
               </div>
             </div>
 
-            {/* One-off dates */}
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-2">
                 One-off dates <span className="text-cream/25">(optional)</span>
@@ -334,7 +405,6 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
           )}
         </form>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/8 bg-navy-mid flex-shrink-0">
           <button
             type="button"
