@@ -9,6 +9,8 @@ import OwnerDashboard from './pages/OwnerDashboard'
 import CrewDashboard from './pages/CrewDashboard'
 import MyListings from './pages/MyListings'
 import Browse from './pages/Browse'
+import Applications from './pages/Applications'
+import Messages from './pages/Messages'
 
 function PublicLayout() {
   return (
@@ -55,8 +57,11 @@ function AppRoutes() {
         <Route element={<RequireRole role="crew" />}>
           <Route path="/dashboard/crew" element={<CrewDashboard />} />
         </Route>
-        <Route path="/my-listings" element={<MyListings />} />
-        <Route path="/browse"      element={<Browse />} />
+        <Route path="/my-listings"   element={<MyListings />} />
+        <Route path="/browse"        element={<Browse />} />
+        <Route path="/applications"  element={<Applications />} />
+        <Route path="/messages"      element={<Messages />} />
+        <Route path="/messages/:id"  element={<Messages />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
