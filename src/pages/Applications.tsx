@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import { useNotifications } from '../context/NotificationsContext'
+import ProfileModal from '../components/ProfileModal'
+import ConfirmAcceptModal from '../components/ConfirmAcceptModal'
 
 type AppStatus = 'pending' | 'accepted' | 'rejected'
 
@@ -55,6 +58,7 @@ const STATUS_PILL: Record<AppStatus, string> = {
 
 export default function Applications() {
   const { user } = useAuth()
+  const { markApplicationsSeen } = useNotifications()
   const navigate = useNavigate()
   const isOwner = user?.account_type === 'owner'
 
@@ -65,6 +69,8 @@ export default function Applications() {
   const [listings, setListings] = useState<Record<number, BaseListing>>({})
   const [loading, setLoading] = useState(true)
   const [actingOn, setActingOn] = useState<number | null>(null)
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
+  const [pendingAccept, setPendingAccept] = useState<{ id: number; name: string | null } | null>(null)
 
   // Tab semantics:
   // OWNER:
@@ -126,13 +132,27 @@ export default function Applications() {
 
   useEffect(() => { refresh() }, [refresh])
 
-  const accept = async (id: number) => {
-    setActingOn(id)
+  // Mark applications as seen on first mount (and whenever user identity changes)
+  useEffect(() => { markApplicationsSeen() }, [markApplicationsSeen])
+
+  const requestAccept = (id: number) => {
+    const item = items.find(it => it.id === id)
+    if (!item) return
+    const senderId = isJobAppList ? (item as JobApplication).crewmember_id : (item as CrewInquiry).owner_id
+    const sender = users[senderId]
+    const name = sender ? `${sender.first_name} ${sender.last_name}` : null
+    setPendingAccept({ id, name })
+  }
+
+  const confirmAccept = async () => {
+    if (!pendingAccept) return
+    setActingOn(pendingAccept.id)
     try {
       const path = isJobAppList
-        ? `/api/v1/job-applications/${id}/accept`
-        : `/api/v1/crew-inquiries/${id}/accept`
+        ? `/api/v1/job-applications/${pendingAccept.id}/accept`
+        : `/api/v1/crew-inquiries/${pendingAccept.id}/accept`
       const res = await api.post<{ conversation: { id: number } }>(path, {})
+      setPendingAccept(null)
       navigate(`/messages/${res.conversation.id}`)
     } catch (err) {
       alert((err as ApiError).detail ?? 'Failed to accept.')
@@ -261,8 +281,12 @@ export default function Applications() {
 
                   {/* Other party (only show on received tabs) */}
                   {isReceived && (
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-7 h-7 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setProfileUserId(senderId)}
+                      className="flex items-center gap-2 mb-3 group"
+                    >
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-gold/10 border border-gold/20 group-hover:ring-2 group-hover:ring-gold/40 flex items-center justify-center flex-shrink-0 transition-all">
                         {sender?.photo_url ? (
                           <img src={sender.photo_url} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -270,9 +294,9 @@ export default function Applications() {
                         )}
                       </div>
                       <p className="text-xs text-cream/65">
-                        From <span className="text-cream font-medium">{sender ? `${sender.first_name} ${sender.last_name}` : 'Unknown'}</span>
+                        From <span className="text-cream font-medium group-hover:text-gold transition-colors">{sender ? `${sender.first_name} ${sender.last_name}` : 'Unknown'}</span>
                       </p>
-                    </div>
+                    </button>
                   )}
 
                   {it.message && (
@@ -295,7 +319,7 @@ export default function Applications() {
                       {isReceived && it.status === 'pending' && (
                         <>
                           <button
-                            onClick={() => accept(it.id)}
+                            onClick={() => requestAccept(it.id)}
                             disabled={actingOn === it.id}
                             className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
                           >
@@ -327,6 +351,20 @@ export default function Applications() {
           </div>
         )}
       </div>
+
+      <ProfileModal
+        isOpen={!!profileUserId}
+        onClose={() => setProfileUserId(null)}
+        userId={profileUserId}
+      />
+
+      <ConfirmAcceptModal
+        isOpen={!!pendingAccept}
+        onClose={() => setPendingAccept(null)}
+        onConfirm={confirmAccept}
+        loading={actingOn != null && actingOn === pendingAccept?.id}
+        personName={pendingAccept?.name ?? null}
+      />
     </div>
   )
 }

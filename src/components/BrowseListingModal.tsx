@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../lib/api'
+import ProfileModal from './ProfileModal'
 
 interface BaseListing {
   id: number
@@ -76,6 +77,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
   const [cvFile, setCvFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitMsg, setSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [profileOpen, setProfileOpen] = useState(false)
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden'
@@ -290,8 +292,12 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
             {poster && (
               <section>
                 <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">{ownerLabel}</h3>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen(true)}
+                  className="flex items-center gap-3 group"
+                >
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 group-hover:ring-2 group-hover:ring-gold/40 flex items-center justify-center flex-shrink-0 transition-all">
                     {poster.photo_url ? (
                       <img src={poster.photo_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -300,8 +306,11 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                       </span>
                     )}
                   </div>
-                  <p className="text-sm font-medium text-cream">{poster.first_name} {poster.last_name}</p>
-                </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-cream group-hover:text-gold transition-colors">{poster.first_name} {poster.last_name}</p>
+                    <p className="text-[10px] text-cream/35 group-hover:text-gold/60 transition-colors">View profile</p>
+                  </div>
+                </button>
               </section>
             )}
 
@@ -412,6 +421,12 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
           </div>
         </div>
       </div>
+
+      <ProfileModal
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        userId={poster?.id ?? null}
+      />
     </div>
   )
 }

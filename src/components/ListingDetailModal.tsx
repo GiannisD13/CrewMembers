@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../lib/api'
+import ProfileModal from './ProfileModal'
+import ConfirmAcceptModal from './ConfirmAcceptModal'
 
 interface BaseListing {
   id: number
@@ -107,6 +109,8 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
   const [users, setUsers] = useState<Record<string, UserLite>>({})
   const [appsLoading, setAppsLoading] = useState(false)
   const [actingOn, setActingOn] = useState<number | null>(null)
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
+  const [pendingAccept, setPendingAccept] = useState<{ id: number; name: string | null } | null>(null)
 
   // Init form when listing changes
   useEffect(() => {
@@ -254,14 +258,26 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
     }
   }
 
-  const acceptApplication = async (appId: number) => {
-    if (!listing) return
-    setActingOn(appId)
+  const requestAccept = (appId: number) => {
+    const senderId = (() => {
+      const app = applications.find(a => a.id === appId)
+      if (!app) return null
+      return type === 'job' ? (app as JobApplication).crewmember_id : (app as CrewInquiry).owner_id
+    })()
+    const sender = senderId ? users[senderId] : null
+    const name = sender ? `${sender.first_name} ${sender.last_name}` : null
+    setPendingAccept({ id: appId, name })
+  }
+
+  const confirmAccept = async () => {
+    if (!listing || !pendingAccept) return
+    setActingOn(pendingAccept.id)
     try {
       const path = type === 'job'
-        ? `/api/v1/job-applications/${appId}/accept`
-        : `/api/v1/crew-inquiries/${appId}/accept`
+        ? `/api/v1/job-applications/${pendingAccept.id}/accept`
+        : `/api/v1/crew-inquiries/${pendingAccept.id}/accept`
       const res = await api.post<{ conversation: { id: number } }>(path, {})
+      setPendingAccept(null)
       onClose()
       navigate(`/messages/${res.conversation.id}`)
     } catch (err) {
@@ -516,18 +532,26 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
                   return (
                     <div key={app.id} className="bg-white/3 border border-white/8 rounded-xl p-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setProfileUserId(senderId)}
+                          className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 hover:ring-2 hover:ring-gold/40 flex items-center justify-center flex-shrink-0 transition-all"
+                        >
                           {sender?.photo_url ? (
                             <img src={sender.photo_url} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <span className="font-display text-sm font-semibold text-gold">{initials}</span>
                           )}
-                        </div>
+                        </button>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <p className="text-sm font-medium text-cream">
+                            <button
+                              type="button"
+                              onClick={() => setProfileUserId(senderId)}
+                              className="text-sm font-medium text-cream hover:text-gold transition-colors text-left"
+                            >
                               {sender ? `${sender.first_name} ${sender.last_name}` : 'Unknown user'}
-                            </p>
+                            </button>
                             <span className={`text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full ${
                               app.status === 'accepted' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
                               : app.status === 'rejected' ? 'bg-red-500/15 text-red-400 border border-red-500/25'
@@ -552,7 +576,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
                           {app.status === 'pending' && (
                             <div className="flex gap-2 mt-2">
                               <button
-                                onClick={() => acceptApplication(app.id)}
+                                onClick={() => requestAccept(app.id)}
                                 disabled={actingOn === app.id}
                                 className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
                               >
@@ -577,6 +601,20 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
           </section>
         </div>
       </div>
+
+      <ProfileModal
+        isOpen={!!profileUserId}
+        onClose={() => setProfileUserId(null)}
+        userId={profileUserId}
+      />
+
+      <ConfirmAcceptModal
+        isOpen={!!pendingAccept}
+        onClose={() => setPendingAccept(null)}
+        onConfirm={confirmAccept}
+        loading={actingOn != null && actingOn === pendingAccept?.id}
+        personName={pendingAccept?.name ?? null}
+      />
     </div>
   )
 }

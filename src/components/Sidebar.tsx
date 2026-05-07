@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useNotifications } from '../context/NotificationsContext'
 
 interface SidebarProps {
   mobileOpen: boolean
@@ -42,6 +43,7 @@ const ICONS = {
 
 export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const { user, logout } = useAuth()
+  const { newMessages, hasNewApplications } = useNotifications()
   const navigate  = useNavigate()
   const location  = useLocation()
 
@@ -94,10 +96,20 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           {ICONS.browse} {browseLabel}
         </NavLink>
         <NavLink to="/applications" className={({ isActive }) => linkCls(isActive)}>
-          {ICONS.applications} Applications
+          {ICONS.applications}
+          <span className="flex-1">Applications</span>
+          {hasNewApplications && (
+            <span className="w-2 h-2 rounded-full bg-gold shadow-[0_0_8px_rgba(196,151,58,0.6)]" aria-label="New activity" />
+          )}
         </NavLink>
         <NavLink to="/messages" className={({ isActive }) => linkCls(isActive)}>
-          {ICONS.messages} Messages
+          {ICONS.messages}
+          <span className="flex-1">Messages</span>
+          {newMessages > 0 && (
+            <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-gold text-navy text-[10px] font-bold flex items-center justify-center">
+              {newMessages > 99 ? '99+' : newMessages}
+            </span>
+          )}
         </NavLink>
       </nav>
 

@@ -48,6 +48,7 @@ export default function Browse() {
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Listing | null>(null)
+  const [coverPhotos, setCoverPhotos] = useState<Record<number, string>>({})
 
   // Server-applied filters (backend supports)
   const [role, setRole]         = useState('')
@@ -73,7 +74,25 @@ export default function Browse() {
     const url = qs ? `${apiPath}?${qs}` : apiPath
 
     api.get<Listing[]>(url)
-      .then(setListings)
+      .then(async data => {
+        setListings(data)
+        // Fetch cover photo for each job posting (jobs only have media)
+        if (isCrewUser) {
+          const results = await Promise.all(data.map(item =>
+            api.get<{ id: number; url: string; order: number }[]>(`/api/v1/job-postings/${item.id}/media`)
+              .then(media => {
+                const sorted = [...media].sort((a, b) => a.order - b.order)
+                return { id: item.id, url: sorted[0]?.url ?? null }
+              })
+              .catch(() => ({ id: item.id, url: null }))
+          ))
+          const map: Record<number, string> = {}
+          results.forEach(r => { if (r.url) map[r.id] = r.url })
+          setCoverPhotos(map)
+        } else {
+          setCoverPhotos({})
+        }
+      })
       .catch(() => setListings([]))
       .finally(() => setLoading(false))
   }, [role, location, minSalary, apiPath, isCrewUser])
@@ -198,8 +217,24 @@ export default function Browse() {
               <article
                 key={item.id}
                 onClick={() => setSelected(item)}
-                className="bg-navy-light border border-white/10 rounded-2xl p-5 hover:border-gold/30 hover:shadow-[0_0_30px_rgba(196,151,58,0.08)] transition-all cursor-pointer"
+                className="bg-navy-light border border-white/10 rounded-2xl overflow-hidden hover:border-gold/30 hover:shadow-[0_0_30px_rgba(196,151,58,0.08)] transition-all cursor-pointer flex flex-col"
               >
+                {/* Cover photo (jobs only) */}
+                {isCrewUser && (
+                  <div className="relative aspect-[16/10] bg-navy overflow-hidden">
+                    {coverPhotos[item.id] ? (
+                      <img src={coverPhotos[item.id]} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-navy via-navy-mid to-teal/20 flex items-center justify-center">
+                        <svg className="w-12 h-12 text-cream/15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 18l4-8 5 6 3-4 6 8M3 18h18M3 18V6a1 1 0 011-1h16a1 1 0 011 1v12" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="p-5 flex flex-col flex-1">
                 <div className="flex items-start justify-between mb-3">
                   <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
                     {ROLE_LABELS[item.role] ?? item.role}
@@ -232,6 +267,7 @@ export default function Browse() {
                 {item.description && (
                   <p className="text-xs text-cream/45 line-clamp-3">{item.description}</p>
                 )}
+                </div>
               </article>
             ))}
           </div>

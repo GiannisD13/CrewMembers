@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { api, ApiError } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import { useNotifications } from '../context/NotificationsContext'
+import ProfileModal from '../components/ProfileModal'
 
 interface Conversation {
   id: number
@@ -39,8 +41,34 @@ function formatDay(iso: string) {
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+function Avatar({ user, size = 'md', onClick }: {
+  user: UserLite | undefined
+  size?: 'sm' | 'md' | 'lg'
+  onClick?: () => void
+}) {
+  const sizeCls = size === 'sm' ? 'w-8 h-8 text-[10px]' : size === 'lg' ? 'w-10 h-10 text-xs' : 'w-9 h-9 text-xs'
+  const initials = user ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase() : '?'
+  const interactive = onClick ? 'cursor-pointer hover:ring-2 hover:ring-gold/40 transition-all' : ''
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!onClick}
+      className={`${sizeCls} ${interactive} rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0`}
+    >
+      {user?.photo_url ? (
+        <img src={user.photo_url} alt="" className="w-full h-full object-cover" />
+      ) : (
+        <span className="font-display font-semibold text-gold">{initials}</span>
+      )}
+    </button>
+  )
+}
+
 export default function Messages() {
   const { user } = useAuth()
+  const { markConversationRead } = useNotifications()
   const navigate = useNavigate()
   const { id } = useParams<{ id?: string }>()
   const activeId = id ? Number(id) : null
@@ -53,6 +81,8 @@ export default function Messages() {
   const [loadingMsgs, setLoadingMsgs] = useState(false)
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
+
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
 
   const threadEndRef = useRef<HTMLDivElement>(null)
 
@@ -81,12 +111,14 @@ export default function Messages() {
     try {
       const data = await api.get<Message[]>(`/api/v1/conversations/${convId}/messages?limit=100`)
       setMessages(data)
+      const maxId = data.reduce((m, x) => x.id > m ? x.id : m, 0)
+      if (maxId > 0) markConversationRead(convId, maxId)
     } catch {
       if (!silent) setMessages([])
     } finally {
       if (!silent) setLoadingMsgs(false)
     }
-  }, [])
+  }, [markConversationRead])
 
   useEffect(() => {
     if (!activeId) {
@@ -126,6 +158,9 @@ export default function Messages() {
 
   const activeConversation = conversations.find(c => c.id === activeId) ?? null
   const activeOther = activeConversation ? otherUserOf(activeConversation) : null
+  const activeOtherId = activeConversation
+    ? (user?.account_type === 'owner' ? activeConversation.crew_member_id : activeConversation.owner_id)
+    : null
 
   return (
     <div className="h-[calc(100vh-3.5rem)] lg:h-screen flex">
@@ -154,30 +189,21 @@ export default function Messages() {
             <ul>
               {conversations.map(c => {
                 const other = otherUserOf(c)
-                const initials = other ? `${other.first_name[0]}${other.last_name[0]}`.toUpperCase() : '?'
+                const otherId = user?.account_type === 'owner' ? c.crew_member_id : c.owner_id
                 const isActive = c.id === activeId
                 return (
                   <li key={c.id}>
-                    <Link
-                      to={`/messages/${c.id}`}
-                      className={`flex items-center gap-3 px-5 py-3 border-b border-white/5 transition-colors ${
-                        isActive ? 'bg-gold/8' : 'hover:bg-white/5'
-                      }`}
-                    >
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
-                        {other?.photo_url ? (
-                          <img src={other.photo_url} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="font-display text-sm font-semibold text-gold">{initials}</span>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
+                    <div className={`flex items-center gap-3 px-5 py-3 border-b border-white/5 transition-colors ${
+                      isActive ? 'bg-gold/8' : 'hover:bg-white/5'
+                    }`}>
+                      <Avatar user={other} size="lg" onClick={() => setProfileUserId(otherId)} />
+                      <Link to={`/messages/${c.id}`} className="min-w-0 flex-1">
                         <p className={`text-sm font-medium truncate ${isActive ? 'text-gold' : 'text-cream'}`}>
                           {other ? `${other.first_name} ${other.last_name}` : 'Unknown user'}
                         </p>
                         <p className="text-[11px] text-cream/35">Started {formatDay(c.created_at)}</p>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
                   </li>
                 )
               })}
@@ -208,25 +234,24 @@ export default function Messages() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <div className="w-9 h-9 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
-                {activeOther?.photo_url ? (
-                  <img src={activeOther.photo_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="font-display text-xs font-semibold text-gold">
-                    {activeOther ? `${activeOther.first_name[0]}${activeOther.last_name[0]}`.toUpperCase() : '?'}
-                  </span>
-                )}
-              </div>
-              <div className="min-w-0">
+              <Avatar
+                user={activeOther}
+                onClick={activeOtherId ? () => setProfileUserId(activeOtherId) : undefined}
+              />
+              <button
+                type="button"
+                onClick={() => activeOtherId && setProfileUserId(activeOtherId)}
+                className="min-w-0 text-left hover:opacity-80 transition-opacity"
+              >
                 <p className="text-sm font-semibold text-cream truncate">
                   {activeOther ? `${activeOther.first_name} ${activeOther.last_name}` : 'Conversation'}
                 </p>
-                <p className="text-[11px] text-cream/35">Started {formatDay(activeConversation.created_at)}</p>
-              </div>
+                <p className="text-[11px] text-cream/35">View profile · Started {formatDay(activeConversation.created_at)}</p>
+              </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-2">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-1">
               {loadingMsgs ? (
                 <div className="flex justify-center py-10">
                   <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
@@ -239,7 +264,12 @@ export default function Messages() {
                 messages.map((m, i) => {
                   const isMine = m.sender_id === user?.id
                   const prev = messages[i - 1]
+                  const next = messages[i + 1]
                   const showDay = !prev || formatDay(prev.created_at) !== formatDay(m.created_at)
+                  // Group consecutive messages from same sender — show avatar only on the last in a run
+                  const isLastInRun = !next || next.sender_id !== m.sender_id
+                  const isFirstInRun = !prev || prev.sender_id !== m.sender_id
+
                   return (
                     <div key={m.id}>
                       {showDay && (
@@ -247,14 +277,29 @@ export default function Messages() {
                           {formatDay(m.created_at)}
                         </p>
                       )}
-                      <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] sm:max-w-[60%] px-4 py-2.5 rounded-2xl ${
-                          isMine
-                            ? 'bg-gold/90 text-navy rounded-br-sm'
-                            : 'bg-white/8 text-cream rounded-bl-sm'
-                        }`}>
-                          <p className="text-sm whitespace-pre-wrap break-words">{m.content}</p>
-                          <p className={`text-[10px] mt-1 ${isMine ? 'text-navy/60' : 'text-cream/40'}`}>
+                      <div className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'} ${isFirstInRun ? 'mt-3' : 'mt-0.5'}`}>
+                        {/* Their avatar (left) */}
+                        {!isMine && (
+                          <div className="flex-shrink-0 w-7">
+                            {isLastInRun && (
+                              <Avatar
+                                user={activeOther}
+                                size="sm"
+                                onClick={activeOtherId ? () => setProfileUserId(activeOtherId) : undefined}
+                              />
+                            )}
+                          </div>
+                        )}
+
+                        <div className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} max-w-[75%] sm:max-w-[60%]`}>
+                          <div className={`px-4 py-2.5 rounded-2xl ${
+                            isMine
+                              ? `bg-gold/90 text-navy ${isLastInRun ? 'rounded-br-sm' : ''}`
+                              : `bg-white/8 text-cream ${isLastInRun ? 'rounded-bl-sm' : ''}`
+                          }`}>
+                            <p className="text-sm whitespace-pre-wrap break-words">{m.content}</p>
+                          </div>
+                          <p className="text-[10px] text-cream/35 mt-0.5 px-1">
                             {formatTime(m.created_at)}
                           </p>
                         </div>
@@ -294,6 +339,12 @@ export default function Messages() {
           </>
         )}
       </section>
+
+      <ProfileModal
+        isOpen={!!profileUserId}
+        onClose={() => setProfileUserId(null)}
+        userId={profileUserId}
+      />
     </div>
   )
 }
