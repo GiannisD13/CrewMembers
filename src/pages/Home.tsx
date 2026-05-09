@@ -11,47 +11,88 @@ const FEATURES = [
   {
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
-    label: 'Verified Crew',
-    body: 'Every crew member is verified for STCW, RYA, MCA, and role-specific certifications.',
+    label: 'Availability That Works Both Ways',
+    body: "Owners post the exact dates they need crew. Crew set the days they're free. Onboard shows you only what fits — no scrolling through listings that don't match your calendar.",
   },
   {
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
       </svg>
     ),
-    label: 'Global Coverage',
-    body: 'Active listings across 32 countries — Mediterranean, Atlantic, Caribbean, and Pacific.',
+    label: 'Your Next Job Finds You',
+    body: 'Set your role, certifications, and preferred dates once. When a new position matches your profile, you get notified instantly — so the right opportunities reach you before someone else takes them.',
   },
   {
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
       </svg>
     ),
-    label: 'Fast Placement',
-    body: 'Most positions are filled within 48 hours. Urgent listings are prioritised automatically.',
+    label: 'Ratings That Actually Mean Something',
+    body: "After every trip, owners and crew rate each other. A captain who's shown up reliably across 20 charters carries that reputation with them — and owners who treat crew well attract better applicants.",
   },
   {
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
     ),
-    label: 'Secure & Private',
-    body: 'Contact details stay private until you choose to share them outside the platform.',
+    label: 'From Match to Message in Minutes',
+    body: "No emails, no agencies, no waiting. When there's a fit, both sides connect and confirm the details directly with built-in messaging that keeps everything in one place.",
   },
 ]
 
+// ── Feature card (reused for orbit + mobile slots + wipe overlay) ─
+function FeatureCard({
+  feature: f,
+  variant = 'cream',
+}: { feature: typeof FEATURES[number], variant?: 'cream' | 'dark' }) {
+  const isDark = variant === 'dark'
+  return (
+    <div className={
+      isDark
+        ? 'h-full p-5'
+        : 'h-full bg-cream border border-navy/8 rounded-xl shadow-md transition-all overflow-hidden hover:shadow-xl hover:border-navy/16'
+    }>
+      {!isDark && (
+        <div className="h-[3px] w-full"
+             style={{ background: 'linear-gradient(to right, rgba(168,130,58,0.7), rgba(168,130,58,0.25))' }} />
+      )}
+      <div className={isDark ? '' : 'p-5'}>
+        <div className="flex items-start gap-3 mb-3">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+               style={{
+                 background: isDark ? 'rgba(201,165,96,0.18)' : 'rgba(168,130,58,0.10)',
+                 border:    isDark ? '1px solid rgba(201,165,96,0.45)' : '1px solid rgba(168,130,58,0.28)',
+               }}>
+            <span style={{ color: isDark ? 'rgba(201,165,96,0.95)' : 'rgba(168,130,58,0.9)' }}>{f.icon}</span>
+          </div>
+          <h4 className={`font-display text-[14px] font-semibold tracking-tight leading-snug pt-1.5 ${isDark ? 'text-cream' : ''}`}
+              style={isDark ? undefined : { color: 'rgba(20,25,37,0.85)' }}>
+            {f.label}
+          </h4>
+        </div>
+        <p className={`text-[11.5px] font-light tracking-wide leading-relaxed ${isDark ? 'text-cream/60' : ''}`}
+           style={isDark ? undefined : { color: 'var(--stone)' }}>
+          {f.body}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ── Orbit section ─────────────────────────────────────────────────
 function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }) {
-  const ORBIT_R    = 285
+  const ORBIT_R    = 290
   const cardRefs   = useRef<(HTMLDivElement | null)[]>([])
   const topRefs    = useRef<(HTMLDivElement | null)[]>([null, null, null, null])
   const botRefs    = useRef<(HTMLDivElement | null)[]>([null, null, null, null])
+  const topWipeContentRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null])
+  const botWipeContentRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null])
   const topWipeRef = useRef<HTMLDivElement>(null)
   const botWipeRef = useRef<HTMLDivElement>(null)
   const hintRef    = useRef<HTMLParagraphElement>(null)
@@ -59,7 +100,6 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
   const prevRawIdx = useRef(0)
   const cycleDir   = useRef(1)   // 1 = forward, -1 = backward
 
-  // Single source of truth: only one HelmWheel in DOM at a time
   const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 767px)').matches)
   const isMobileRef = useRef(isMobile)
   useEffect(() => {
@@ -79,7 +119,7 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
       const angle = angleRef.current
       const rad   = angle * (Math.PI / 180)
 
-      // ── Desktop: orbit cards follow wheel ────────────────────
+      // Desktop: orbit cards follow wheel
       FEATURES.forEach((_, i) => {
         const card = cardRefs.current[i]
         if (!card) return
@@ -90,12 +130,11 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
         card.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`
       })
 
-      // ── Mobile: continuous fade+slide + navy wipe ─────────────
+      // Mobile cycle tracking
       const featurePos = angle / 90
       const rawIdx     = Math.floor(featurePos)
-      const frac       = featurePos - rawIdx   // 0..1
+      const frac       = featurePos - rawIdx
 
-      // Track which direction the current cycle is going
       if (rawIdx !== prevRawIdx.current) {
         cycleDir.current  = rawIdx > prevRawIdx.current ? 1 : -1
         prevRawIdx.current = rawIdx
@@ -105,32 +144,34 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
       const nxt    = (cur + 1) % 4
       const botCur = (cur + 2) % 4
       const botNxt = (cur + 3) % 4
-      const SLIDE  = 20
+
+      // Underlying card: snap-swaps under the wipe at frac=0.5 (invisible to user)
+      const topShown = frac < 0.5 ? cur : nxt
+      const botShown = frac < 0.5 ? botCur : botNxt
+
+      // Wipe carries the incoming feature (depends on direction of spin)
+      const topWipeIdx = cycleDir.current > 0 ? nxt : cur
+      const botWipeIdx = cycleDir.current > 0 ? botNxt : botCur
 
       for (let i = 0; i < 4; i++) {
         const top = topRefs.current[i]
         const bot = botRefs.current[i]
-        let tOp = 0, tTx = SLIDE, bOp = 0, bTx = SLIDE
+        if (top) top.style.opacity = String(i === topShown ? 1 : 0)
+        if (bot) bot.style.opacity = String(i === botShown ? 1 : 0)
 
-        if (i === cur)      { tOp = 1 - frac; tTx = -frac * SLIDE }
-        else if (i === nxt) { tOp = frac;      tTx = (1 - frac) * SLIDE }
-        if (i === botCur)      { bOp = 1 - frac; bTx = -frac * SLIDE }
-        else if (i === botNxt) { bOp = frac;      bTx = (1 - frac) * SLIDE }
-
-        if (top) { top.style.opacity = String(tOp); top.style.transform = `translateX(${tTx}px)` }
-        if (bot) { bot.style.opacity = String(bOp); bot.style.transform = `translateX(${bTx}px)` }
+        const topWipeContent = topWipeContentRefs.current[i]
+        const botWipeContent = botWipeContentRefs.current[i]
+        if (topWipeContent) topWipeContent.style.opacity = String(i === topWipeIdx ? 1 : 0)
+        if (botWipeContent) botWipeContent.style.opacity = String(i === botWipeIdx ? 1 : 0)
       }
 
-      // Navy wipe overlay: sweeps in from the direction of spin, exits the other side
-      // Forward (cycleDir=1):  100% → 0% → -100%  (enters right, exits left)
-      // Backward (cycleDir=-1): -100% → 0% → 100%  (enters left, exits right)
+      // Wipe sweep: enters from direction of spin, exits the other side
       const wipeTx = cycleDir.current > 0
         ? (0.5 - frac) * 200
         : (frac - 0.5) * 200
       if (topWipeRef.current) topWipeRef.current.style.transform = `translateX(${wipeTx}%)`
       if (botWipeRef.current) botWipeRef.current.style.transform = `translateX(${wipeTx}%)`
 
-      // Hide hint only after real manual spin on mobile (angle moved >40° with no auto-spin)
       if (isMobileRef.current && !interacted.current && Math.abs(angle) > 40) {
         interacted.current = true
         if (hintRef.current) hintRef.current.style.opacity = '0'
@@ -141,17 +182,29 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
   }, [angleRef])
 
   return (
-    <section className="relative bg-cream-dim py-16 overflow-hidden">
-      <div className="text-center mb-6 px-6">
-        <p className="text-[10px] font-semibold tracking-[0.28em] uppercase" style={{ color: 'var(--gold)' }}>
-          Why CrewDeck
+    <section className="relative bg-cream-dim py-24 md:py-28 overflow-hidden">
+
+      {/* Section heading */}
+      <div className="text-center mb-14 md:mb-16 px-6 max-w-2xl mx-auto">
+        <p className="text-[10px] font-semibold tracking-[0.32em] uppercase mb-5"
+           style={{ color: 'rgba(168,130,58,0.85)' }}>
+          The Difference
+        </p>
+        <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-navy leading-[1.05] tracking-tight mb-5">
+          Why owners and crew<br />
+          <em className="not-italic italic font-light" style={{ color: 'rgba(20,25,37,0.42)' }}>
+            choose us.
+          </em>
+        </h2>
+        <p className="text-sm leading-relaxed max-w-md mx-auto" style={{ color: 'var(--stone)' }}>
+          Four reasons we're built differently from agencies and group chats.
         </p>
       </div>
 
-      {/* ── Desktop orbit (single HelmWheel, no auto-spin conflict) ── */}
+      {/* Desktop orbit */}
       {!isMobile && (
         <>
-          <div className="relative mx-auto" style={{ width: 700, height: 700, maxWidth: '100vw' }}>
+          <div className="relative mx-auto" style={{ width: 760, height: 760, maxWidth: '100vw' }}>
             <div className="absolute rounded-full pointer-events-none" style={{
               top: `calc(50% - ${ORBIT_R}px)`, left: `calc(50% - ${ORBIT_R}px)`,
               width: ORBIT_R * 2, height: ORBIT_R * 2,
@@ -159,14 +212,8 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
             }} />
             {FEATURES.map((f, i) => (
               <div key={i} ref={el => { cardRefs.current[i] = el }}
-                className="absolute" style={{ top: '50%', left: '50%', width: 192, willChange: 'transform' }}>
-                <div className="bg-cream border border-navy/8 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-navy/16 transition-all">
-                  <div className="flex items-center gap-2.5 mb-2.5">
-                    <span style={{ color: 'rgba(20,25,37,0.40)' }}>{f.icon}</span>
-                    <h4 className="text-xs font-semibold tracking-wide" style={{ color: 'rgba(20,25,37,0.70)' }}>{f.label}</h4>
-                  </div>
-                  <p className="text-[11px] leading-relaxed" style={{ color: 'var(--stone)' }}>{f.body}</p>
-                </div>
+                className="absolute" style={{ top: '50%', left: '50%', width: 240, willChange: 'transform' }}>
+                <FeatureCard feature={f} />
               </div>
             ))}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
@@ -180,45 +227,60 @@ function OrbitSection({ angleRef }: { angleRef: React.MutableRefObject<number> }
         </>
       )}
 
-      {/* ── Mobile: static slots + wheel (no auto-spin) ── */}
+      {/* Mobile */}
       {isMobile && (
-        <div className="flex flex-col items-center px-6 gap-5">
+        <div className="flex flex-col items-center px-6 gap-6">
 
-          {/* Top card slot */}
-          <div className="w-full relative overflow-hidden rounded-xl" style={{ height: 110 }}>
-            {/* Navy wipe overlay — sits above feature cards */}
-            <div ref={topWipeRef} className="absolute inset-0 rounded-xl z-20 pointer-events-none"
-              style={{ background: '#141925', transform: 'translateX(100%)' }} />
+          {/* Top slot */}
+          <div className="w-full relative overflow-hidden rounded-xl" style={{ height: 220 }}>
+            {/* Underlying cream cards — opacity-toggled under the wipe */}
             {FEATURES.map((f, i) => (
-              <div key={i} ref={el => { topRefs.current[i] = el }}
-                className="absolute inset-x-0 top-0 bg-cream border border-navy/8 rounded-xl p-5 shadow-sm z-10"
-                style={{ opacity: i === 0 ? 1 : 0, willChange: 'opacity, transform' }}>
-                <div className="flex items-center gap-2.5 mb-2">
-                  <span style={{ color: 'rgba(20,25,37,0.40)' }}>{f.icon}</span>
-                  <h4 className="text-xs font-semibold tracking-wide" style={{ color: 'rgba(20,25,37,0.70)' }}>{f.label}</h4>
-                </div>
-                <p className="text-[11px] leading-relaxed" style={{ color: 'var(--stone)' }}>{f.body}</p>
+              <div key={`top-${i}`} ref={el => { topRefs.current[i] = el }}
+                className="absolute inset-0 z-10"
+                style={{ opacity: i === 0 ? 1 : 0, willChange: 'opacity' }}>
+                <FeatureCard feature={f} />
               </div>
             ))}
+            {/* Navy wipe carrying the incoming feature */}
+            <div ref={topWipeRef}
+              className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-xl"
+              style={{ background: '#141925', transform: 'translateX(100%)', willChange: 'transform' }}>
+              <div className="h-[3px] w-full"
+                   style={{ background: 'linear-gradient(to right, rgba(201,165,96,0.85), rgba(168,130,58,0.35))' }} />
+              {FEATURES.map((f, i) => (
+                <div key={`wipe-top-${i}`} ref={el => { topWipeContentRefs.current[i] = el }}
+                  className="absolute inset-x-0 top-[3px] bottom-0"
+                  style={{ opacity: i === 1 ? 1 : 0 }}>
+                  <FeatureCard feature={f} variant="dark" />
+                </div>
+              ))}
+            </div>
           </div>
 
           <HelmWheel angleRef={angleRef} size={180} variant="light" autoSpinSpeed={0} />
 
-          {/* Bottom card slot */}
-          <div className="w-full relative overflow-hidden rounded-xl" style={{ height: 110 }}>
-            <div ref={botWipeRef} className="absolute inset-0 rounded-xl z-20 pointer-events-none"
-              style={{ background: '#141925', transform: 'translateX(100%)' }} />
+          {/* Bottom slot */}
+          <div className="w-full relative overflow-hidden rounded-xl" style={{ height: 220 }}>
             {FEATURES.map((f, i) => (
-              <div key={i} ref={el => { botRefs.current[i] = el }}
-                className="absolute inset-x-0 top-0 bg-cream border border-navy/8 rounded-xl p-5 shadow-sm z-10"
-                style={{ opacity: i === 2 ? 1 : 0, willChange: 'opacity, transform' }}>
-                <div className="flex items-center gap-2.5 mb-2">
-                  <span style={{ color: 'rgba(20,25,37,0.40)' }}>{f.icon}</span>
-                  <h4 className="text-xs font-semibold tracking-wide" style={{ color: 'rgba(20,25,37,0.70)' }}>{f.label}</h4>
-                </div>
-                <p className="text-[11px] leading-relaxed" style={{ color: 'var(--stone)' }}>{f.body}</p>
+              <div key={`bot-${i}`} ref={el => { botRefs.current[i] = el }}
+                className="absolute inset-0 z-10"
+                style={{ opacity: i === 2 ? 1 : 0, willChange: 'opacity' }}>
+                <FeatureCard feature={f} />
               </div>
             ))}
+            <div ref={botWipeRef}
+              className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-xl"
+              style={{ background: '#141925', transform: 'translateX(100%)', willChange: 'transform' }}>
+              <div className="h-[3px] w-full"
+                   style={{ background: 'linear-gradient(to right, rgba(201,165,96,0.85), rgba(168,130,58,0.35))' }} />
+              {FEATURES.map((f, i) => (
+                <div key={`wipe-bot-${i}`} ref={el => { botWipeContentRefs.current[i] = el }}
+                  className="absolute inset-x-0 top-[3px] bottom-0"
+                  style={{ opacity: i === 3 ? 1 : 0 }}>
+                  <FeatureCard feature={f} variant="dark" />
+                </div>
+              ))}
+            </div>
           </div>
 
           <p ref={hintRef}
