@@ -39,9 +39,9 @@ const ROLE_LABELS: Record<string, string> = {
 }
 
 const STATUS_PILL: Record<AppStatus, string> = {
-  pending: 'bg-gold/15 text-gold border-gold/25',
-  accepted: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25',
-  rejected: 'bg-red-500/15 text-red-400 border-red-500/25',
+  pending: 'bg-gold/8 text-gold-light/95 border-gold/25',
+  accepted: 'bg-teal-light/12 text-teal-light border-teal-light/30',
+  rejected: 'bg-red-500/12 text-red-400/85 border-red-500/25',
 }
 
 function formatDate(iso: string) {
@@ -79,15 +79,15 @@ export default function ApplicationDetailModal({
       <div onClick={acting ? undefined : onClose} className="absolute inset-0 bg-navy/85 backdrop-blur-md" />
 
       <div className="relative h-full flex items-center justify-center p-0 sm:p-4">
-        <div className="w-full sm:max-w-xl h-full sm:h-auto sm:max-h-[85vh] bg-navy-mid sm:border border-white/10 sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div className="w-full sm:max-w-xl h-full sm:h-auto sm:max-h-[85vh] bg-navy-mid sm:border border-white/10 sm:rounded-xl shadow-2xl overflow-hidden flex flex-col">
 
           {/* Header */}
           <div className="px-6 pt-5 pb-4 border-b border-white/8 flex items-start justify-between gap-3 flex-shrink-0">
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-cream/35 mb-1">
+              <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-cream/40 mb-1">
                 {isReceived ? 'Application received' : 'Application sent'}
               </p>
-              <h2 className="font-display text-lg font-semibold text-cream truncate">
+              <h2 className="font-display text-lg font-semibold tracking-tight text-cream truncate">
                 {senderName}
               </h2>
             </div>
@@ -116,7 +116,7 @@ export default function ApplicationDetailModal({
               type="button"
               onClick={onOpenProfile}
               disabled={!onOpenProfile}
-              className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/8 hover:border-gold/30 hover:bg-gold/[0.04] transition-all group disabled:opacity-100 disabled:cursor-default text-left"
+              className="w-full flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/12 hover:border-gold/35 hover:bg-gold/[0.04] transition-all group disabled:opacity-100 disabled:cursor-default text-left"
             >
               <div className="w-12 h-12 rounded-full overflow-hidden bg-gold/10 border border-gold/25 flex items-center justify-center flex-shrink-0">
                 {sender?.photo_url ? (
@@ -126,54 +126,54 @@ export default function ApplicationDetailModal({
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-cream group-hover:text-gold transition-colors truncate">{senderName}</p>
+                <p className="text-sm font-semibold text-cream group-hover:text-gold-light/95 transition-colors truncate">{senderName}</p>
                 {onOpenProfile && (
-                  <p className="text-[11px] text-cream/45 mt-0.5">View profile →</p>
+                  <p className="text-[11px] font-light tracking-wide text-cream/45 mt-0.5">View profile →</p>
                 )}
               </div>
             </button>
 
             {/* Listing context */}
             {listing && (
-              <div className="rounded-xl bg-navy/40 border border-white/5 p-4">
-                <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-cream/35 mb-2">
+              <div className="rounded-lg bg-navy/40 border border-white/5 p-4">
+                <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-cream/40 mb-2">
                   About listing
                 </p>
                 <div className="flex items-start gap-2 flex-wrap mb-1">
-                  <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold inline-block">
+                  <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90 inline-block">
                     {ROLE_LABELS[listing.role] ?? listing.role}
                   </span>
                 </div>
-                <h4 className="font-display text-sm font-semibold text-cream">{listing.title}</h4>
+                <h4 className="font-display text-sm font-semibold tracking-tight text-cream">{listing.title}</h4>
                 {listing.location && (
-                  <p className="text-xs text-cream/45 mt-0.5">{listing.location}</p>
+                  <p className="text-xs font-light tracking-wide text-cream/45 mt-0.5">{listing.location}</p>
                 )}
               </div>
             )}
 
             {/* Message */}
             <div>
-              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-cream/35 mb-2">
+              <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-cream/40 mb-2">
                 Message
               </p>
               {message ? (
-                <p className="text-sm text-cream/80 whitespace-pre-wrap leading-relaxed">{message}</p>
+                <p className="text-sm font-light tracking-wide text-cream/80 whitespace-pre-wrap leading-relaxed">{message}</p>
               ) : (
-                <p className="text-sm text-cream/40 italic">No message provided.</p>
+                <p className="text-sm font-light text-cream/40 italic">No message provided.</p>
               )}
             </div>
 
             {/* CV */}
             {cvUrl && (
               <div>
-                <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-cream/35 mb-2">
+                <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-cream/40 mb-2">
                   Attachment
                 </p>
                 <a
                   href={cvUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gold/10 border border-gold/25 text-gold hover:bg-gold/20 transition-colors text-xs font-medium"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-gold/8 border border-gold/25 text-gold-light/95 hover:bg-gold/15 transition-colors text-xs font-medium"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -185,7 +185,7 @@ export default function ApplicationDetailModal({
 
             {/* Submitted */}
             <div className="pt-3 border-t border-white/5">
-              <p className="text-[11px] text-cream/35">Submitted on {formatDate(createdAt)}</p>
+              <p className="text-[11px] font-light tracking-wide text-cream/40">Submitted on {formatDate(createdAt)}</p>
             </div>
           </div>
 
@@ -197,14 +197,14 @@ export default function ApplicationDetailModal({
                   <button
                     onClick={onReject}
                     disabled={acting}
-                    className="text-xs font-medium px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-cream/60 hover:text-red-400 hover:border-red-400/30 transition-colors disabled:opacity-50"
+                    className="text-xs font-medium px-4 py-2 rounded-md bg-white/5 border border-white/10 text-cream/60 hover:text-red-400/85 hover:border-red-400/30 transition-colors disabled:opacity-50"
                   >
                     Reject
                   </button>
                   <button
                     onClick={onAccept}
                     disabled={acting}
-                    className="text-xs font-semibold px-4 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+                    className="text-xs font-semibold px-4 py-2 rounded-md bg-teal-light/12 border border-teal-light/30 text-teal-light hover:bg-teal-light/20 transition-colors disabled:opacity-50"
                   >
                     {acting ? 'Accepting…' : 'Accept'}
                   </button>
@@ -213,7 +213,7 @@ export default function ApplicationDetailModal({
                 <button
                   onClick={onWithdraw}
                   disabled={acting}
-                  className="text-xs font-medium px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-cream/60 hover:text-red-400 hover:border-red-400/30 transition-colors disabled:opacity-50"
+                  className="text-xs font-medium px-4 py-2 rounded-md bg-white/5 border border-white/10 text-cream/60 hover:text-red-400/85 hover:border-red-400/30 transition-colors disabled:opacity-50"
                 >
                   {acting ? 'Withdrawing…' : 'Withdraw'}
                 </button>

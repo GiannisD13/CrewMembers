@@ -121,7 +121,7 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
     >
       <div onClick={onClose} className="absolute inset-0 bg-navy/85 backdrop-blur-md" />
 
-      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-lg lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-lg lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-xl border border-white/10 shadow-2xl overflow-hidden">
 
         {/* Close button overlay */}
         <button
@@ -163,15 +163,15 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
 
             {/* Name + role */}
             <div className="px-6 mb-5">
-              <h2 className="font-display text-2xl font-semibold text-cream">{fullName}</h2>
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-cream">{fullName}</h2>
               {accountLabel && (
-                <p className="text-xs font-semibold tracking-[0.15em] uppercase text-gold/80 mt-1">{accountLabel}</p>
+                <p className="text-xs font-semibold tracking-[0.18em] uppercase text-gold-light/80 mt-1">{accountLabel}</p>
               )}
             </div>
 
             {/* Rating */}
             <div className="px-6 mb-6">
-              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">Rating</h3>
+              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">Rating</h3>
               <StarRating value={crew?.rating ?? owner?.rating ?? null} />
             </div>
 
@@ -181,10 +181,10 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
 
                 {crew.roles.length > 0 && (
                   <section>
-                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">Roles</h3>
+                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">Roles</h3>
                     <div className="flex flex-wrap gap-1.5">
                       {crew.roles.map(r => (
-                        <span key={r} className="text-[11px] font-semibold tracking-[0.1em] uppercase px-2.5 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold">
+                        <span key={r} className="text-[11px] font-semibold tracking-[0.18em] uppercase px-2.5 py-1 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                           {ROLE_LABELS[r] ?? r}
                         </span>
                       ))}
@@ -215,7 +215,7 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
                   )}
                   <div className="bg-white/3 border border-white/8 rounded-xl px-4 py-3">
                     <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-cream/40 mb-0.5">Status</p>
-                    <p className={`text-sm font-medium ${crew.looking_for_job ? 'text-emerald-400' : 'text-cream/55'}`}>
+                    <p className={`text-sm font-medium ${crew.looking_for_job ? 'text-teal-light' : 'text-cream/55'}`}>
                       {crew.looking_for_job ? 'Available' : 'Not available'}
                     </p>
                   </div>
@@ -223,7 +223,7 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
 
                 {crew.bio && (
                   <section>
-                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">About</h3>
+                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">About</h3>
                     <p className="text-sm text-cream/75 leading-relaxed whitespace-pre-wrap">{crew.bio}</p>
                   </section>
                 )}
@@ -235,7 +235,7 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
               <div className="px-6 pb-6 space-y-5">
                 {owner.company_name && (
                   <section>
-                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">Company</h3>
+                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">Company</h3>
                     <p className="text-base font-medium text-cream">{owner.company_name}</p>
                   </section>
                 )}
@@ -249,7 +249,7 @@ export default function ProfileModal({ isOpen, onClose, userId }: ProfileModalPr
 
                 {owner.description && (
                   <section>
-                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">About</h3>
+                    <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">About</h3>
                     <p className="text-sm text-cream/75 leading-relaxed whitespace-pre-wrap">{owner.description}</p>
                   </section>
                 )}

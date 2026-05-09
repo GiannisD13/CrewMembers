@@ -26,7 +26,7 @@ const CREW_ROLES = [
   { value: 'deckhand',   label: 'Deckhand' },
 ]
 
-const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
 
 export default function CrewDashboard() {
   const { user, refreshUser, logout } = useAuth()
@@ -150,7 +150,7 @@ export default function CrewDashboard() {
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Profile header card */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-5">
 
@@ -187,17 +187,17 @@ export default function CrewDashboard() {
                   {user?.first_name} {user?.last_name}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-semibold tracking-[0.2em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
+                  <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                     Crew Member
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <div className={`w-1.5 h-1.5 rounded-full ${crewForm.looking_for_job ? 'bg-emerald-400' : 'bg-white/20'}`} />
-                    <span className="text-[10px] text-cream/40">
+                    <div className={`w-1.5 h-1.5 rounded-full ${crewForm.looking_for_job ? 'bg-teal-light' : 'bg-white/20'}`} />
+                    <span className="text-[10px] font-light tracking-wide text-cream/45">
                       {crewForm.looking_for_job ? 'Available' : 'Not available'}
                     </span>
                   </div>
                 </div>
-                <p className="text-xs text-cream/35 mt-1">{user?.email}</p>
+                <p className="text-xs font-light tracking-wide text-cream/40 mt-1">{user?.email}</p>
               </div>
             </div>
 
@@ -214,9 +214,9 @@ export default function CrewDashboard() {
         </div>
 
         {/* Personal info */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <h3 className="font-display text-lg font-semibold text-cream mb-1">Personal Information</h3>
-          <p className="text-xs text-cream/35 mb-5">Update your name and contact details.</p>
+          <p className="text-xs font-light tracking-wide text-cream/40 mb-5">Update your name and contact details.</p>
 
           <form onSubmit={savePersonal} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -251,22 +251,22 @@ export default function CrewDashboard() {
             </div>
 
             {personalMsg && (
-              <p className={`text-sm ${personalMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-sm ${personalMsg.type === 'success' ? 'text-teal-light' : 'text-red-400'}`}>
                 {personalMsg.text}
               </p>
             )}
 
             <button type="submit" disabled={personalLoading}
-              className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {personalLoading ? 'Saving…' : 'Save changes'}
             </button>
           </form>
         </div>
 
         {/* Crew profile */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <h3 className="font-display text-lg font-semibold text-cream mb-1">Crew Profile</h3>
-          <p className="text-xs text-cream/35 mb-5">Visible to yacht owners browsing available crew.</p>
+          <p className="text-xs font-light tracking-wide text-cream/40 mb-5">Visible to yacht owners browsing available crew.</p>
 
           <form onSubmit={saveCrew} className="space-y-5">
 
@@ -274,7 +274,7 @@ export default function CrewDashboard() {
             <div className="flex items-center justify-between p-4 rounded-xl bg-white/3 border border-white/8">
               <div>
                 <p className="text-sm font-medium text-cream">Available for hire</p>
-                <p className="text-xs text-cream/35 mt-0.5">Owners can see you in search results</p>
+                <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">Owners can see you in search results</p>
               </div>
               <button
                 type="button"
@@ -298,7 +298,7 @@ export default function CrewDashboard() {
                     onClick={() => toggleRole(r.value)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${
                       crewForm.roles.includes(r.value)
-                        ? 'bg-gold/15 border-gold/50 text-gold'
+                        ? 'bg-gold/10 border-gold/45 text-gold-light/95'
                         : 'bg-white/5 border-white/10 text-cream/50 hover:border-white/25 hover:text-cream/70'
                     }`}
                   >
@@ -337,18 +337,18 @@ export default function CrewDashboard() {
                 onChange={e => setCrewForm(p => ({ ...p, bio: e.target.value }))}
                 placeholder="Tell owners about your experience and what makes you a great crew member…"
                 rows={4}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all resize-none"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all resize-none"
               />
             </div>
 
             {crewMsg && (
-              <p className={`text-sm ${crewMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-sm ${crewMsg.type === 'success' ? 'text-teal-light' : 'text-red-400'}`}>
                 {crewMsg.text}
               </p>
             )}
 
             <button type="submit" disabled={crewLoading}
-              className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {crewLoading ? 'Saving…' : 'Save changes'}
             </button>
           </form>
@@ -357,14 +357,14 @@ export default function CrewDashboard() {
         {/* My Listings */}
         <Link
           to="/my-listings"
-          className="block bg-navy-light border border-white/8 rounded-2xl p-6 hover:border-gold/30 transition-colors group"
+          className="block bg-navy-light border border-white/12 rounded-xl p-6 hover:border-gold/35 transition-colors group"
         >
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-display text-lg font-semibold text-cream group-hover:text-gold-light transition-colors">
                 My Listings
               </h3>
-              <p className="text-xs text-cream/35 mt-0.5">Manage your crew listings</p>
+              <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">Manage your crew listings</p>
             </div>
             <svg className="w-5 h-5 text-cream/30 group-hover:text-gold/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

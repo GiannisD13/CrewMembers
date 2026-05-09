@@ -115,11 +115,11 @@ export default function Browse() {
 
       {/* ── Header ───────────────────────────────────────────────── */}
       <div className="px-4 sm:px-6 lg:px-10 pt-6 lg:pt-10 pb-6">
-        <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-2">
+        <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold-light/85 mb-2">
           {isCrewUser ? 'Open Positions' : 'Available Crew'}
         </p>
-        <h1 className="font-display text-2xl lg:text-3xl font-semibold text-cream mb-1">{heading}</h1>
-        <p className="text-sm text-cream/40">{subhead}</p>
+        <h1 className="font-display text-3xl lg:text-4xl font-semibold tracking-tight text-cream mb-1.5">{heading}</h1>
+        <p className="text-xs sm:text-sm font-light tracking-wide text-cream/40">{subhead}</p>
       </div>
 
       {/* ── Filters ──────────────────────────────────────────────── */}
@@ -186,7 +186,7 @@ export default function Browse() {
             </button>
           )}
 
-          <span className="text-xs text-cream/30 ml-auto">
+          <span className="text-xs font-light tracking-wide text-cream/35 ml-auto">
             {loading ? 'Loading…' : `${filtered.length} result${filtered.length !== 1 ? 's' : ''}`}
           </span>
         </div>
@@ -200,24 +200,24 @@ export default function Browse() {
             <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-navy-light border border-dashed border-white/10 rounded-2xl py-16 px-6 text-center">
+          <div className="bg-navy-light/80 border border-dashed border-white/12 rounded-xl py-16 px-6 text-center">
             <div className="text-3xl opacity-30 mb-3">⚓</div>
-            <p className="text-cream/50 text-sm mb-3">
+            <p className="text-cream/55 text-sm font-light tracking-wide mb-3">
               {hasFilters ? 'No listings match your filters.' : 'No listings available right now.'}
             </p>
             {hasFilters && (
-              <button onClick={clearFilters} className="text-xs font-semibold text-gold hover:text-gold-light transition-colors">
+              <button onClick={clearFilters} className="text-xs font-semibold text-gold-light/90 hover:text-gold-light transition-colors">
                 Clear filters
               </button>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
             {filtered.map(item => (
               <article
                 key={item.id}
                 onClick={() => setSelected(item)}
-                className="bg-navy-light border border-white/10 rounded-2xl overflow-hidden hover:border-gold/30 hover:shadow-[0_0_30px_rgba(196,151,58,0.08)] transition-all cursor-pointer flex flex-col"
+                className="bg-navy-light border border-white/12 rounded-xl overflow-hidden hover:border-gold/35 hover:shadow-[0_0_30px_rgba(196,151,58,0.08)] transition-all cursor-pointer flex flex-col"
               >
                 {/* Cover photo (jobs only) */}
                 {isCrewUser && (
@@ -234,38 +234,38 @@ export default function Browse() {
                   </div>
                 )}
 
-                <div className="p-5 flex flex-col flex-1">
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
+                  <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                     {ROLE_LABELS[item.role] ?? item.role}
                   </span>
-                  <span className="text-[10px] text-cream/30">{formatDate(item.created_at)}</span>
+                  <span className="text-[10px] font-light tracking-wide text-cream/35">{formatDate(item.created_at)}</span>
                 </div>
 
-                <h3 className="font-display text-lg font-semibold text-cream mb-3 line-clamp-2">{item.title}</h3>
+                <h3 className="font-display text-lg font-semibold tracking-tight text-cream mb-3 line-clamp-2">{item.title}</h3>
 
-                <div className="space-y-1.5 mb-4 text-xs text-cream/55">
+                <div className="space-y-1.5 mb-4 text-[11px] sm:text-xs font-light tracking-wide text-cream/50">
                   {item.location && (
                     <div className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <span className="truncate">{item.location}</span>
                     </div>
                   )}
                   {isCrewUser && (item as JobPosting).salary != null && (
-                    <div className="flex items-center gap-1.5 text-gold">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <div className="flex items-center gap-1.5 text-gold-light/90">
+                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="font-medium">€{Number((item as JobPosting).salary).toLocaleString()} / month</span>
+                      <span className="font-normal">€{Number((item as JobPosting).salary).toLocaleString()} / month</span>
                     </div>
                   )}
                 </div>
 
                 {item.description && (
-                  <p className="text-xs text-cream/45 line-clamp-3">{item.description}</p>
+                  <p className="text-[11px] sm:text-xs font-light text-cream/45 line-clamp-3 leading-relaxed">{item.description}</p>
                 )}
                 </div>
               </article>

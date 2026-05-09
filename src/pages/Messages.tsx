@@ -48,7 +48,7 @@ function Avatar({ user, size = 'md', onClick }: {
 }) {
   const sizeCls = size === 'sm' ? 'w-8 h-8 text-[10px]' : size === 'lg' ? 'w-10 h-10 text-xs' : 'w-9 h-9 text-xs'
   const initials = user ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase() : '?'
-  const interactive = onClick ? 'cursor-pointer hover:ring-2 hover:ring-gold/40 transition-all' : ''
+  const interactive = onClick ? 'cursor-pointer hover:ring-2 hover:ring-gold/35 transition-all' : ''
 
   return (
     <button
@@ -166,10 +166,10 @@ export default function Messages() {
     <div className="h-[calc(100vh-3.5rem)] lg:h-screen flex">
 
       {/* Conversations list — full width on mobile when no thread, hidden when thread is open */}
-      <aside className={`${activeId ? 'hidden lg:flex' : 'flex'} flex-col w-full lg:w-80 lg:flex-shrink-0 border-r border-white/8 bg-navy-mid`}>
+      <aside className={`${activeId ? 'hidden lg:flex' : 'flex'} flex-col w-full lg:w-80 lg:flex-shrink-0 border-r border-white/12 bg-navy-mid`}>
         <div className="px-5 py-4 border-b border-white/8">
-          <h1 className="font-display text-lg font-semibold text-cream">Messages</h1>
-          <p className="text-xs text-cream/40 mt-0.5">Conversations from accepted applications.</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-cream">Messages</h1>
+          <p className="text-xs font-light tracking-wide text-cream/40 mt-1">Conversations from accepted applications.</p>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -180,8 +180,8 @@ export default function Messages() {
           ) : conversations.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <div className="text-3xl opacity-30 mb-3">💬</div>
-              <p className="text-sm text-cream/45">No conversations yet.</p>
-              <p className="text-xs text-cream/30 mt-1">
+              <p className="text-sm font-light tracking-wide text-cream/55">No conversations yet.</p>
+              <p className="text-xs font-light tracking-wide text-cream/35 mt-1">
                 A conversation starts when an application is accepted.
               </p>
             </div>
@@ -198,10 +198,10 @@ export default function Messages() {
                     }`}>
                       <Avatar user={other} size="lg" onClick={() => setProfileUserId(otherId)} />
                       <Link to={`/messages/${c.id}`} className="min-w-0 flex-1">
-                        <p className={`text-sm font-medium truncate ${isActive ? 'text-gold' : 'text-cream'}`}>
+                        <p className={`text-sm font-medium truncate ${isActive ? 'text-gold-light/95' : 'text-cream'}`}>
                           {other ? `${other.first_name} ${other.last_name}` : 'Unknown user'}
                         </p>
-                        <p className="text-[11px] text-cream/35">Started {formatDay(c.created_at)}</p>
+                        <p className="text-[11px] font-light tracking-wide text-cream/35">Started {formatDay(c.created_at)}</p>
                       </Link>
                     </div>
                   </li>
@@ -218,7 +218,7 @@ export default function Messages() {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center px-6">
               <div className="text-3xl opacity-30 mb-3">💬</div>
-              <p className="text-sm text-cream/45">Select a conversation</p>
+              <p className="text-sm font-light tracking-wide text-cream/50">Select a conversation</p>
             </div>
           </div>
         ) : (
@@ -246,7 +246,7 @@ export default function Messages() {
                 <p className="text-sm font-semibold text-cream truncate">
                   {activeOther ? `${activeOther.first_name} ${activeOther.last_name}` : 'Conversation'}
                 </p>
-                <p className="text-[11px] text-cream/35">View profile · Started {formatDay(activeConversation.created_at)}</p>
+                <p className="text-[11px] font-light tracking-wide text-cream/40">View profile · Started {formatDay(activeConversation.created_at)}</p>
               </button>
             </div>
 
@@ -257,7 +257,7 @@ export default function Messages() {
                   <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : messages.length === 0 ? (
-                <p className="text-center text-xs text-cream/35 py-10">
+                <p className="text-center text-xs font-light tracking-wide text-cream/40 py-10">
                   No messages yet — say hello.
                 </p>
               ) : (
@@ -292,14 +292,14 @@ export default function Messages() {
                         )}
 
                         <div className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} max-w-[75%] sm:max-w-[60%]`}>
-                          <div className={`px-4 py-2.5 rounded-2xl ${
+                          <div className={`px-4 py-2.5 rounded-xl ${
                             isMine
-                              ? `bg-gold/90 text-navy ${isLastInRun ? 'rounded-br-sm' : ''}`
+                              ? `bg-gold/85 text-navy ${isLastInRun ? 'rounded-br-sm' : ''}`
                               : `bg-white/8 text-cream ${isLastInRun ? 'rounded-bl-sm' : ''}`
                           }`}>
                             <p className="text-sm whitespace-pre-wrap break-words">{m.content}</p>
                           </div>
-                          <p className="text-[10px] text-cream/35 mt-0.5 px-1">
+                          <p className="text-[10px] font-light tracking-wide text-cream/35 mt-0.5 px-1">
                             {formatTime(m.created_at)}
                           </p>
                         </div>
@@ -325,12 +325,12 @@ export default function Messages() {
                   }}
                   rows={1}
                   placeholder="Type a message…"
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-cream placeholder-cream/25 focus:outline-none focus:border-gold/60 transition-colors resize-none max-h-32"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-cream/25 focus:outline-none focus:border-gold/60 transition-colors resize-none max-h-32"
                 />
                 <button
                   type="submit"
                   disabled={!draft.trim() || sending}
-                  className="bg-gold text-navy font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+                  className="bg-gold/95 text-navy font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                 >
                   {sending ? '…' : 'Send'}
                 </button>

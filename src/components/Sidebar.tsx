@@ -58,9 +58,9 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const handleLogout = () => { logout(); navigate('/') }
 
   const linkCls = (active: boolean) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
       active
-        ? 'bg-gold/15 text-gold border border-gold/25'
+        ? 'bg-gold/10 text-gold-light/95 border border-gold/25'
         : 'text-cream/55 hover:text-cream hover:bg-white/5 border border-transparent'
     }`
 
@@ -99,14 +99,14 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           {ICONS.applications}
           <span className="flex-1">Applications</span>
           {hasNewApplications && (
-            <span className="w-2 h-2 rounded-full bg-gold shadow-[0_0_8px_rgba(196,151,58,0.6)]" aria-label="New activity" />
+            <span className="w-2 h-2 rounded-full bg-gold-light/95 shadow-[0_0_8px_rgba(196,151,58,0.5)]" aria-label="New activity" />
           )}
         </NavLink>
         <NavLink to="/messages" className={({ isActive }) => linkCls(isActive)}>
           {ICONS.messages}
           <span className="flex-1">Messages</span>
           {newMessages > 0 && (
-            <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-gold text-navy text-[10px] font-bold flex items-center justify-center">
+            <span className="min-w-[20px] h-5 px-1.5 rounded-md bg-gold/95 text-navy text-[10px] font-bold flex items-center justify-center">
               {newMessages > 99 ? '99+' : newMessages}
             </span>
           )}
@@ -117,7 +117,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       <div className="p-4 border-t border-white/5">
         <Link
           to={`/dashboard/${user.account_type}`}
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors mb-2"
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors mb-2"
         >
           <div className="w-9 h-9 rounded-full overflow-hidden bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
             {user.photo_url ? (
@@ -128,7 +128,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-cream truncate">{user.first_name} {user.last_name}</p>
-            <p className="text-[11px] text-cream/35 capitalize">{user.account_type === 'owner' ? 'Yacht Owner' : 'Crew Member'}</p>
+            <p className="text-[11px] font-light tracking-wide text-cream/40 capitalize">{user.account_type === 'owner' ? 'Yacht Owner' : 'Crew Member'}</p>
           </div>
         </Link>
         <button

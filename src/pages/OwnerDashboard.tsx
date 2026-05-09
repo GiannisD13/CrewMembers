@@ -13,7 +13,7 @@ interface OwnerProfile {
 
 type Msg = { type: 'success' | 'error'; text: string }
 
-const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
 
 export default function OwnerDashboard() {
   const { user, refreshUser, logout } = useAuth()
@@ -113,7 +113,7 @@ export default function OwnerDashboard() {
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Profile header card */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-5">
 
@@ -149,10 +149,10 @@ export default function OwnerDashboard() {
                 <h2 className="font-display text-xl font-semibold text-cream">
                   {user?.first_name} {user?.last_name}
                 </h2>
-                <span className="text-[10px] font-semibold tracking-[0.2em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
+                <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                   Yacht Owner
                 </span>
-                <p className="text-xs text-cream/35 mt-1">{user?.email}</p>
+                <p className="text-xs font-light tracking-wide text-cream/40 mt-1">{user?.email}</p>
               </div>
             </div>
 
@@ -169,9 +169,9 @@ export default function OwnerDashboard() {
         </div>
 
         {/* Personal info */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <h3 className="font-display text-lg font-semibold text-cream mb-1">Personal Information</h3>
-          <p className="text-xs text-cream/35 mb-5">Update your name and contact details.</p>
+          <p className="text-xs font-light tracking-wide text-cream/40 mb-5">Update your name and contact details.</p>
 
           <form onSubmit={savePersonal} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -206,22 +206,22 @@ export default function OwnerDashboard() {
             </div>
 
             {personalMsg && (
-              <p className={`text-sm ${personalMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-sm ${personalMsg.type === 'success' ? 'text-teal-light' : 'text-red-400'}`}>
                 {personalMsg.text}
               </p>
             )}
 
             <button type="submit" disabled={personalLoading}
-              className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {personalLoading ? 'Saving…' : 'Save changes'}
             </button>
           </form>
         </div>
 
         {/* Company profile */}
-        <div className="bg-navy-light border border-white/8 rounded-2xl p-6">
+        <div className="bg-navy-light border border-white/12 rounded-xl p-6">
           <h3 className="font-display text-lg font-semibold text-cream mb-1">Company Profile</h3>
-          <p className="text-xs text-cream/35 mb-5">Visible to crew members browsing your listings.</p>
+          <p className="text-xs font-light tracking-wide text-cream/40 mb-5">Visible to crew members browsing your listings.</p>
 
           <form onSubmit={saveOwner} className="space-y-4">
             <div>
@@ -245,18 +245,18 @@ export default function OwnerDashboard() {
                 onChange={e => setOwnerForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Tell crew members about you and your vessel…"
                 rows={4}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all resize-none"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all resize-none"
               />
             </div>
 
             {ownerMsg && (
-              <p className={`text-sm ${ownerMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-sm ${ownerMsg.type === 'success' ? 'text-teal-light' : 'text-red-400'}`}>
                 {ownerMsg.text}
               </p>
             )}
 
             <button type="submit" disabled={ownerLoading}
-              className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {ownerLoading ? 'Saving…' : 'Save changes'}
             </button>
           </form>
@@ -265,14 +265,14 @@ export default function OwnerDashboard() {
         {/* My Listings */}
         <Link
           to="/my-listings"
-          className="block bg-navy-light border border-white/8 rounded-2xl p-6 hover:border-gold/30 transition-colors group"
+          className="block bg-navy-light border border-white/12 rounded-xl p-6 hover:border-gold/35 transition-colors group"
         >
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-display text-lg font-semibold text-cream group-hover:text-gold-light transition-colors">
                 My Listings
               </h3>
-              <p className="text-xs text-cream/35 mt-0.5">Manage your job postings</p>
+              <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">Manage your job postings</p>
             </div>
             <svg className="w-5 h-5 text-cream/30 group-hover:text-gold/60 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -21,7 +21,7 @@ export default function CrewCard({ member }: CrewCardProps) {
   const gradient = avatarColors[idx % avatarColors.length]
 
   return (
-    <div className="group bg-navy-light border border-white/6 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/50 hover:border-gold/25 cursor-pointer flex flex-col">
+    <div className="group bg-navy-light border border-white/12 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/50 hover:border-gold/35 cursor-pointer flex flex-col">
 
       {/* Header */}
       <div className="flex items-center gap-3.5 mb-4">
@@ -31,14 +31,14 @@ export default function CrewCard({ member }: CrewCardProps) {
           </span>
         </div>
         <div className="min-w-0">
-          <h3 className="font-display text-[1rem] font-semibold text-cream leading-tight truncate group-hover:text-gold-light transition-colors">
+          <h3 className="font-display text-[1rem] font-semibold tracking-tight text-cream leading-tight truncate group-hover:text-gold-light transition-colors">
             {member.name}
           </h3>
-          <p className="text-xs text-gold/80 font-medium mt-0.5">{member.primaryRole}</p>
+          <p className="text-xs text-gold-light/85 font-medium mt-0.5">{member.primaryRole}</p>
         </div>
         <div className="ml-auto flex-shrink-0">
-          <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${member.available ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-white/5 text-cream/30 border border-white/10'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${member.available ? 'bg-green-400' : 'bg-cream/20'}`} />
+          <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md ${member.available ? 'bg-teal-light/12 text-teal-light border border-teal-light/30' : 'bg-white/5 text-cream/30 border border-white/10'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${member.available ? 'bg-teal-light' : 'bg-cream/20'}`} />
             {member.available ? 'Available' : 'Booked'}
           </span>
         </div>
@@ -51,27 +51,27 @@ export default function CrewCard({ member }: CrewCardProps) {
           { val: `${member.experience}yr`, label: 'Experience' },
           { val: `${member.rating}★`,    label: 'Rating' },
         ].map(stat => (
-          <div key={stat.label} className="bg-navy/50 rounded-lg px-2 py-2 text-center">
-            <p className="font-display text-sm font-semibold text-cream">{stat.val}</p>
-            <p className="text-[10px] text-cream/35 mt-0.5">{stat.label}</p>
+          <div key={stat.label} className="bg-navy/50 rounded-md px-2 py-2 text-center">
+            <p className="font-display text-sm font-semibold tracking-tight text-cream">{stat.val}</p>
+            <p className="text-[10px] font-light tracking-wide text-cream/40 mt-0.5">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Bio */}
-      <p className="text-xs text-cream/50 leading-relaxed line-clamp-2 mb-4">
+      <p className="text-xs font-light tracking-wide text-cream/50 leading-relaxed line-clamp-2 mb-4">
         {member.bio}
       </p>
 
       {/* Certifications */}
       <div className="flex flex-wrap gap-1.5 mb-4">
         {member.certifications.slice(0, 3).map(cert => (
-          <span key={cert} className="text-[10px] px-2 py-0.5 rounded bg-gold/8 text-gold-light/70 border border-gold/15">
+          <span key={cert} className="text-[10px] px-2 py-0.5 rounded-md bg-gold/8 text-gold-light/80 border border-gold/15">
             {cert}
           </span>
         ))}
         {member.certifications.length > 3 && (
-          <span className="text-[10px] px-2 py-0.5 rounded bg-white/4 text-cream/35">
+          <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-cream/35">
             +{member.certifications.length - 3}
           </span>
         )}
@@ -80,12 +80,12 @@ export default function CrewCard({ member }: CrewCardProps) {
       {/* Footer */}
       <div className="mt-auto flex items-center justify-between pt-3.5 border-t border-white/6">
         <div>
-          <p className="text-[11px] text-cream/35 mb-0.5">Available</p>
+          <p className="text-[11px] font-light tracking-wide text-cream/40 mb-0.5">Available</p>
           <p className="text-xs font-medium text-cream/70">
             {member.availability.start} – {member.availability.end}
           </p>
         </div>
-        <button className="text-xs font-semibold text-gold border border-gold/30 px-3.5 py-1.5 rounded-lg hover:bg-gold hover:text-navy transition-all">
+        <button className="text-xs font-semibold text-gold-light/95 border border-gold/30 px-3.5 py-1.5 rounded-md hover:bg-gold/95 hover:text-navy transition-all">
           Contact
         </button>
       </div>

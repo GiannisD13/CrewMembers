@@ -52,9 +52,9 @@ function formatDate(iso: string) {
 }
 
 const STATUS_PILL: Record<AppStatus, string> = {
-  pending: 'bg-gold/15 text-gold border-gold/25',
-  accepted: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25',
-  rejected: 'bg-red-500/15 text-red-400 border-red-500/25',
+  pending: 'bg-gold/8 text-gold-light/95 border-gold/25',
+  accepted: 'bg-teal-light/12 text-teal-light border-teal-light/30',
+  rejected: 'bg-red-500/12 text-red-400/85 border-red-500/25',
 }
 
 export default function Applications() {
@@ -232,20 +232,20 @@ export default function Applications() {
     <div className="px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
       <div className="max-w-4xl mx-auto">
 
-        <div className="mb-6">
-          <h1 className="font-display text-2xl lg:text-3xl font-semibold text-cream">Applications</h1>
-          <p className="text-sm text-cream/40 mt-1">
+        <div className="mb-7">
+          <h1 className="font-display text-3xl lg:text-4xl font-semibold tracking-tight text-cream">Applications</h1>
+          <p className="text-xs sm:text-sm font-light tracking-wide text-cream/40 mt-1.5">
             Manage applications and inquiries between you and the other side.
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-navy-light rounded-xl border border-white/8 mb-6 w-full sm:w-auto sm:inline-flex">
+        <div className="flex gap-1 p-1 bg-navy-light/80 rounded-lg border border-white/12 mb-6 w-full sm:w-auto sm:inline-flex">
           <button
             onClick={() => setTab('received')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all ${
               tab === 'received'
-                ? 'bg-gold/15 text-gold border border-gold/25'
+                ? 'bg-gold/10 text-gold-light/95 border border-gold/25'
                 : 'text-cream/55 hover:text-cream border border-transparent'
             }`}
           >
@@ -253,9 +253,9 @@ export default function Applications() {
           </button>
           <button
             onClick={() => setTab('sent')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all ${
               tab === 'sent'
-                ? 'bg-gold/15 text-gold border border-gold/25'
+                ? 'bg-gold/10 text-gold-light/95 border border-gold/25'
                 : 'text-cream/55 hover:text-cream border border-transparent'
             }`}
           >
@@ -269,9 +269,9 @@ export default function Applications() {
             <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin" />
           </div>
         ) : items.length === 0 ? (
-          <div className="bg-navy-light border border-dashed border-white/10 rounded-2xl py-16 text-center">
+          <div className="bg-navy-light/80 border border-dashed border-white/12 rounded-xl py-16 text-center">
             <div className="text-3xl opacity-30 mb-3">📬</div>
-            <p className="text-cream/50 text-sm">
+            <p className="text-cream/55 text-sm font-light tracking-wide">
               {isReceived
                 ? `You have not received any ${isOwner ? 'applications' : 'inquiries'} yet.`
                 : `You have not sent any ${isOwner ? 'inquiries' : 'applications'} yet.`}
@@ -285,7 +285,7 @@ export default function Applications() {
               const total = entries.length
 
               return (
-                <section key={listingId} className="bg-navy-light border border-white/8 rounded-2xl overflow-hidden">
+                <section key={listingId} className="bg-navy-light border border-white/12 rounded-xl overflow-hidden">
 
                   {/* Group header */}
                   <header className="px-5 py-4 bg-navy/40 border-b border-white/8">
@@ -294,25 +294,25 @@ export default function Applications() {
                         {listing ? (
                           <>
                             <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                              <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
+                              <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                                 {ROLE_LABELS[listing.role] ?? listing.role}
                               </span>
                               {listing.location && (
-                                <span className="text-[11px] text-cream/40">· {listing.location}</span>
+                                <span className="text-[11px] font-light tracking-wide text-cream/45">· {listing.location}</span>
                               )}
                             </div>
-                            <h3 className="font-display text-base font-semibold text-cream">{listing.title}</h3>
+                            <h3 className="font-display text-base font-semibold tracking-tight text-cream">{listing.title}</h3>
                           </>
                         ) : (
                           <h3 className="font-display text-base font-semibold text-cream/60">Listing #{listingId}</h3>
                         )}
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs text-cream/55">
+                        <p className="text-xs font-light tracking-wide text-cream/55">
                           <span className="text-cream font-semibold">{total}</span> {total === 1 ? (isReceived ? (isOwner ? 'application' : 'inquiry') : (isOwner ? 'inquiry' : 'application')) : (isReceived ? (isOwner ? 'applications' : 'inquiries') : (isOwner ? 'inquiries' : 'applications'))}
                         </p>
                         {pendingCount > 0 && (
-                          <p className="text-[11px] text-gold mt-0.5">{pendingCount} pending</p>
+                          <p className="text-[11px] font-light tracking-wide text-gold-light/95 mt-0.5">{pendingCount} pending</p>
                         )}
                       </div>
                     </div>
@@ -352,15 +352,15 @@ export default function Applications() {
                                 </span>
                               </div>
                               {preview && (
-                                <p className="text-[11px] text-cream/45 truncate mt-0.5">{preview}</p>
+                                <p className="text-[11px] font-light tracking-wide text-cream/45 truncate mt-0.5">{preview}</p>
                               )}
                             </div>
 
                             <div className="text-right flex-shrink-0 hidden sm:block">
-                              <p className="text-[11px] text-cream/35">{formatDate(it.created_at)}</p>
+                              <p className="text-[11px] font-light tracking-wide text-cream/35">{formatDate(it.created_at)}</p>
                             </div>
 
-                            <svg className="w-4 h-4 text-cream/30 group-hover:text-gold/70 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4 text-cream/30 group-hover:text-gold-light/85 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </button>

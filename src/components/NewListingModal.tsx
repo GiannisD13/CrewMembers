@@ -35,7 +35,7 @@ const WEEKDAYS = [
   { value: 6, label: 'Sun' },
 ]
 
-const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
 
 const initialForm = {
   title: '',
@@ -174,14 +174,14 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
     >
       <div onClick={onClose} className="absolute inset-0 bg-navy/80 backdrop-blur-md" />
 
-      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-2xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-2xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-xl border border-white/10 shadow-2xl overflow-hidden">
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/8 flex-shrink-0">
           <div>
-            <h2 className="font-display text-xl font-semibold text-cream">
+            <h2 className="font-display text-xl font-semibold tracking-tight text-cream">
               New {type === 'job' ? 'Job Posting' : 'Crew Listing'}
             </h2>
-            <p className="text-xs text-cream/40 mt-0.5">
+            <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">
               {type === 'job' ? 'Find the right crew for your vessel.' : 'Showcase your availability to yacht owners.'}
             </p>
           </div>
@@ -199,7 +199,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6 space-y-7">
 
           <section className="space-y-4">
-            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Listing Details</h3>
+            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Listing Details</h3>
 
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-1.5">Title <span className="text-red-400">*</span></label>
@@ -257,7 +257,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
               <hr className="border-white/8" />
               <section className="space-y-3">
                 <div>
-                  <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Vessel Photos</h3>
+                  <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Vessel Photos</h3>
                   <p className="text-xs text-cream/35 mt-1">JPG, PNG or WebP — up to 5 MB each.</p>
                 </div>
 
@@ -304,7 +304,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
           <hr className="border-white/8" />
 
           <section className="space-y-4">
-            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Availability</h3>
+            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Availability</h3>
 
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-2">Type <span className="text-red-400">*</span></label>
@@ -314,9 +314,9 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
                     key={t.value}
                     type="button"
                     onClick={() => setForm(p => ({ ...p, availability_type: t.value }))}
-                    className={`text-left p-3 rounded-xl border transition-all ${
+                    className={`text-left p-3 rounded-lg border transition-all ${
                       form.availability_type === t.value
-                        ? 'bg-gold/15 border-gold/50 text-gold'
+                        ? 'bg-gold/10 border-gold/45 text-gold-light/95'
                         : 'bg-white/5 border-white/10 text-cream/55 hover:border-white/25'
                     }`}
                   >
@@ -352,9 +352,9 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
                     key={d.value}
                     type="button"
                     onClick={() => toggleDay(d.value)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-all ${
                       form.recurring_days.includes(d.value)
-                        ? 'bg-gold/15 border-gold/50 text-gold'
+                        ? 'bg-gold/10 border-gold/45 text-gold-light/95'
                         : 'bg-white/5 border-white/10 text-cream/50 hover:border-white/25'
                     }`}
                   >
@@ -376,7 +376,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
                   type="button"
                   onClick={addOneOffDate}
                   disabled={!oneOffInput}
-                  className="px-4 rounded-xl bg-gold/15 border border-gold/30 text-gold text-sm font-semibold hover:bg-gold/25 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-4 rounded-lg bg-gold/10 border border-gold/30 text-gold-light/95 text-sm font-semibold hover:bg-gold/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Add
                 </button>
@@ -399,7 +399,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
           </section>
 
           {error && (
-            <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+            <div className="px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400/85">
               {error}
             </div>
           )}
@@ -409,7 +409,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium text-cream/60 hover:text-cream hover:bg-white/5 transition-colors"
+            className="px-5 py-2.5 rounded-lg text-sm font-medium text-cream/60 hover:text-cream hover:bg-white/5 transition-colors"
           >
             Cancel
           </button>
@@ -417,7 +417,7 @@ export default function NewListingModal({ isOpen, onClose, onSuccess, type }: Ne
             type="submit"
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-gold text-navy font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating…' : 'Create listing'}
           </button>

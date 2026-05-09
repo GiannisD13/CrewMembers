@@ -315,24 +315,24 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
     >
       <div onClick={onClose} className="absolute inset-0 bg-navy/80 backdrop-blur-md" />
 
-      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-3xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-3xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-xl border border-white/10 shadow-2xl overflow-hidden">
 
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-4 border-b border-white/8 flex-shrink-0">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold">
+              <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90">
                 {ROLE_LABELS[listing.role] ?? listing.role}
               </span>
               <span className={`text-[10px] font-semibold tracking-wider uppercase flex items-center gap-1.5 ${
-                listing.is_active ? 'text-emerald-400' : 'text-cream/30'
+                listing.is_active ? 'text-teal-light' : 'text-cream/30'
               }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${listing.is_active ? 'bg-emerald-400' : 'bg-cream/30'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${listing.is_active ? 'bg-teal-light' : 'bg-cream/30'}`} />
                 {listing.is_active ? 'Active' : 'Inactive'}
               </span>
             </div>
-            <h2 className="font-display text-xl font-semibold text-cream truncate">{listing.title}</h2>
-            <p className="text-xs text-cream/35 mt-0.5">Posted {formatDate(listing.created_at)}</p>
+            <h2 className="font-display text-xl font-semibold tracking-tight text-cream truncate">{listing.title}</h2>
+            <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">Posted {formatDate(listing.created_at)}</p>
           </div>
           <button
             onClick={onClose}
@@ -352,7 +352,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
           {type === 'job' && (
             <section className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Vessel Photos</h3>
+                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Vessel Photos</h3>
                 <span className="text-[11px] text-cream/35">{media.length} {media.length === 1 ? 'photo' : 'photos'}</span>
               </div>
 
@@ -404,7 +404,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
 
           {/* Edit fields */}
           <section className="space-y-4">
-            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Listing Details</h3>
+            <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Listing Details</h3>
 
             <div>
               <label className="block text-xs font-medium text-cream/60 mb-1.5">Title</label>
@@ -452,7 +452,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
             </div>
 
             {fieldsMsg && (
-              <p className={`text-sm ${fieldsMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`text-sm ${fieldsMsg.type === 'success' ? 'text-teal-light' : 'text-red-400/85'}`}>
                 {fieldsMsg.text}
               </p>
             )}
@@ -461,7 +461,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
               <button
                 onClick={saveFields}
                 disabled={!isDirty || savingFields}
-                className="bg-gold text-navy font-semibold text-sm px-5 py-2 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {savingFields ? 'Saving…' : 'Save changes'}
               </button>
@@ -471,7 +471,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
           {/* Schedule (read-only display) */}
           {schedule && (
             <section className="space-y-2">
-              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">Availability</h3>
+              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">Availability</h3>
               <div className="flex flex-wrap gap-2 text-xs">
                 <span className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-cream/70 capitalize">
                   {schedule.availability_type}
@@ -503,7 +503,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
           {/* Applications received */}
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70">
+              <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80">
                 {type === 'job' ? 'Applications' : 'Inquiries'} Received
               </h3>
               <span className="text-[11px] text-cream/35">{applications.length}</span>
@@ -535,7 +535,7 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
                         <button
                           type="button"
                           onClick={() => setProfileUserId(senderId)}
-                          className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 hover:ring-2 hover:ring-gold/40 flex items-center justify-center flex-shrink-0 transition-all"
+                          className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 hover:ring-2 hover:ring-gold/35 flex items-center justify-center flex-shrink-0 transition-all"
                         >
                           {sender?.photo_url ? (
                             <img src={sender.photo_url} alt="" className="w-full h-full object-cover" />
@@ -548,19 +548,19 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
                             <button
                               type="button"
                               onClick={() => setProfileUserId(senderId)}
-                              className="text-sm font-medium text-cream hover:text-gold transition-colors text-left"
+                              className="text-sm font-medium text-cream hover:text-gold-light/95 transition-colors text-left"
                             >
                               {sender ? `${sender.first_name} ${sender.last_name}` : 'Unknown user'}
                             </button>
                             <span className={`text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full ${
-                              app.status === 'accepted' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
-                              : app.status === 'rejected' ? 'bg-red-500/15 text-red-400 border border-red-500/25'
-                              : 'bg-gold/15 text-gold border border-gold/25'
+                              app.status === 'accepted' ? 'bg-teal-light/12 text-teal-light border border-teal-light/30'
+                              : app.status === 'rejected' ? 'bg-red-500/12 text-red-400/85 border border-red-500/25'
+                              : 'bg-gold/8 text-gold-light/95 border border-gold/25'
                             }`}>
                               {app.status}
                             </span>
                           </div>
-                          <p className="text-[11px] text-cream/35 mb-2">{formatDate(app.created_at)}</p>
+                          <p className="text-[11px] font-light tracking-wide text-cream/40 mb-2">{formatDate(app.created_at)}</p>
                           {app.message && (
                             <p className="text-sm text-cream/70 mb-2 whitespace-pre-wrap">{app.message}</p>
                           )}
@@ -578,14 +578,14 @@ export default function ListingDetailModal({ isOpen, onClose, onChange, listing,
                               <button
                                 onClick={() => requestAccept(app.id)}
                                 disabled={actingOn === app.id}
-                                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+                                className="text-xs font-semibold px-3 py-1.5 rounded-md bg-teal-light/12 border border-teal-light/30 text-teal-light hover:bg-teal-light/20 transition-colors disabled:opacity-50"
                               >
                                 {actingOn === app.id ? 'Accepting…' : 'Accept'}
                               </button>
                               <button
                                 onClick={() => rejectApplication(app.id)}
                                 disabled={actingOn === app.id}
-                                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-cream/60 hover:text-red-400 hover:border-red-400/30 transition-colors disabled:opacity-50"
+                                className="text-xs font-medium px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-cream/60 hover:text-red-400/85 hover:border-red-400/30 transition-colors disabled:opacity-50"
                               >
                                 Reject
                               </button>

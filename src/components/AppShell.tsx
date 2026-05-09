@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Sidebar from './Sidebar'
+import TopographicBackground from './TopographicBackground'
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const { user } = useAuth()
@@ -34,8 +35,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
           <div className="w-9" />
         </header>
 
-        <main className="flex-1 min-w-0">
-          {children}
+        <main className="relative flex-1 min-w-0">
+          <TopographicBackground className="!fixed" />
+          <div className="relative z-[1]">
+            {children}
+          </div>
         </main>
       </div>
     </div>

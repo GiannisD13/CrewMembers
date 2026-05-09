@@ -57,7 +57,7 @@ const ROLE_LABELS: Record<string, string> = {
 }
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
+const inputCls = 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-cream placeholder-cream/20 focus:outline-none focus:border-gold/60 transition-all'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -162,16 +162,16 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
     >
       <div onClick={onClose} className="absolute inset-0 bg-navy/80 backdrop-blur-md" />
 
-      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-3xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative h-full lg:h-auto lg:my-8 mx-auto w-full lg:max-w-3xl lg:max-h-[calc(100vh-4rem)] flex flex-col bg-navy-mid lg:rounded-xl border border-white/10 shadow-2xl overflow-hidden">
 
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-4 border-b border-white/8 flex-shrink-0">
           <div className="min-w-0">
-            <span className="text-[10px] font-semibold tracking-[0.15em] uppercase px-2 py-0.5 rounded-full bg-gold/10 border border-gold/20 text-gold inline-block mb-1.5">
+            <span className="text-[10px] font-semibold tracking-[0.18em] uppercase px-2 py-0.5 rounded-md bg-gold/8 border border-gold/20 text-gold-light/90 inline-block mb-1.5">
               {ROLE_LABELS[listing.role] ?? listing.role}
             </span>
-            <h2 className="font-display text-xl font-semibold text-cream truncate">{listing.title}</h2>
-            <p className="text-xs text-cream/35 mt-0.5">Posted {formatDate(listing.created_at)}</p>
+            <h2 className="font-display text-xl font-semibold tracking-tight text-cream truncate">{listing.title}</h2>
+            <p className="text-xs font-light tracking-wide text-cream/40 mt-0.5">Posted {formatDate(listing.created_at)}</p>
           </div>
           <button
             onClick={onClose}
@@ -242,7 +242,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                 </span>
               )}
               {salary != null && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold/10 border border-gold/25 text-gold font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold/8 border border-gold/25 text-gold-light/95 font-semibold">
                   €{Number(salary).toLocaleString()} / month
                 </span>
               )}
@@ -251,7 +251,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
             {/* Description */}
             {listing.description && (
               <section>
-                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">Description</h3>
+                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">Description</h3>
                 <p className="text-sm text-cream/75 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
               </section>
             )}
@@ -259,7 +259,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
             {/* Schedule */}
             {schedule && (
               <section>
-                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">Availability</h3>
+                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">Availability</h3>
                 <div className="flex flex-wrap gap-2 text-xs">
                   <span className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-cream/70 capitalize">
                     {schedule.availability_type}
@@ -291,13 +291,13 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
             {/* Poster info */}
             {poster && (
               <section>
-                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/70 mb-2">{ownerLabel}</h3>
+                <h3 className="text-[10px] font-semibold tracking-[0.2em] uppercase text-gold-light/80 mb-2">{ownerLabel}</h3>
                 <button
                   type="button"
                   onClick={() => setProfileOpen(true)}
                   className="flex items-center gap-3 group"
                 >
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 group-hover:ring-2 group-hover:ring-gold/40 flex items-center justify-center flex-shrink-0 transition-all">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gold/10 border border-gold/20 group-hover:ring-2 group-hover:ring-gold/35 flex items-center justify-center flex-shrink-0 transition-all">
                     {poster.photo_url ? (
                       <img src={poster.photo_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -307,8 +307,8 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                     )}
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-cream group-hover:text-gold transition-colors">{poster.first_name} {poster.last_name}</p>
-                    <p className="text-[10px] text-cream/35 group-hover:text-gold/60 transition-colors">View profile</p>
+                    <p className="text-sm font-medium text-cream group-hover:text-gold-light/95 transition-colors">{poster.first_name} {poster.last_name}</p>
+                    <p className="text-[10px] font-light tracking-wide text-cream/40 group-hover:text-gold-light/70 transition-colors">View profile</p>
                   </div>
                 </button>
               </section>
@@ -316,12 +316,12 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
 
             {/* Apply form */}
             {showApply ? (
-              <section className="bg-white/3 border border-gold/25 rounded-2xl p-5 space-y-4">
+              <section className="bg-white/3 border border-gold/25 rounded-xl p-5 space-y-4">
                 <div>
-                  <h3 className="font-display text-base font-semibold text-cream">
+                  <h3 className="font-display text-base font-semibold tracking-tight text-cream">
                     {type === 'job' ? 'Apply for this position' : 'Send inquiry'}
                   </h3>
-                  <p className="text-xs text-cream/45 mt-0.5">
+                  <p className="text-xs font-light tracking-wide text-cream/45 mt-0.5">
                     {type === 'job'
                       ? 'Introduce yourself and attach your CV.'
                       : 'Let the crew member know why you’d like to work together.'}
@@ -347,7 +347,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                       CV <span className="text-cream/30">(PDF — strongly recommended)</span>
                     </label>
                     {cvFile ? (
-                      <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg bg-white/5 border border-white/10">
                         <div className="flex items-center gap-2 min-w-0">
                           <svg className="w-4 h-4 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -365,7 +365,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                       <button
                         type="button"
                         onClick={() => cvRef.current?.click()}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-dashed border-white/15 hover:border-gold/40 hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-cream/50 hover:text-gold text-sm"
+                        className="w-full px-4 py-3 rounded-lg border-2 border-dashed border-white/15 hover:border-gold/40 hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-cream/50 hover:text-gold-light/90 text-sm"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -384,7 +384,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                 )}
 
                 {submitMsg && (
-                  <p className={`text-sm ${submitMsg.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <p className={`text-sm ${submitMsg.type === 'success' ? 'text-teal-light' : 'text-red-400/85'}`}>
                     {submitMsg.text}
                   </p>
                 )}
@@ -393,14 +393,14 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
                   <button
                     onClick={() => setShowApply(false)}
                     disabled={submitting}
-                    className="px-4 py-2 rounded-xl text-sm font-medium text-cream/60 hover:text-cream hover:bg-white/5 transition-colors"
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-cream/60 hover:text-cream hover:bg-white/5 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="bg-gold text-navy font-semibold text-sm px-5 py-2 rounded-xl hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="bg-gold/95 text-navy font-semibold text-sm px-5 py-2 rounded-lg hover:bg-gold-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {submitting
                       ? (type === 'job' ? 'Submitting…' : 'Sending…')
@@ -412,7 +412,7 @@ export default function BrowseListingModal({ isOpen, onClose, listing, type }: B
               <div className="pt-2">
                 <button
                   onClick={() => setShowApply(true)}
-                  className="w-full sm:w-auto bg-gold text-navy font-semibold text-sm px-6 py-3 rounded-xl hover:bg-gold-light transition-colors"
+                  className="w-full sm:w-auto bg-gold/95 text-navy font-semibold text-sm px-6 py-3 rounded-lg hover:bg-gold-light transition-colors"
                 >
                   {type === 'job' ? 'Apply for this position' : 'Send inquiry'}
                 </button>
