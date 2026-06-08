@@ -1,3 +1,4 @@
+<img width="800" height="450" alt="OnBoard-website-intro-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/a6cdca88-f656-4392-b0a6-b530067801aa" />
 # OnBoard — Yacht Crew Marketplace
 
 ---
