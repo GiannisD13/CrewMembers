@@ -6,6 +6,7 @@
 ## Tech Stack
 
 ### Backend
+
 - **FastAPI** — REST API with automatic OpenAPI/Swagger docs
 - **SQLAlchemy 2.0** — ORM with a relational data model across 11 tables
 - **Alembic** — database migrations
@@ -15,6 +16,7 @@
 - File upload pipeline with MIME-type validation and on-disk storage
 
 ### Frontend
+
 - **React 18 + TypeScript** — component-driven UI
 - **Vite** — build tooling
 - **TailwindCSS** — utility-first styling with a custom design token system
@@ -27,7 +29,7 @@
 This project is a full-stack, two-sided marketplace built entirely from scratch. The emphasis was on backend and API development:
 
 - **Designed a REST API from scratch** — resource naming, HTTP semantics, status codes, and a clear contract between the frontend and backend via Pydantic schemas
-- **JWT authentication flow** — token issuance on login/register, middleware-level validation, and role-based route guards (`require_owner`, `require_crew`, `require_admin`)
+- **JWT authentication flow** — token issuance on login/register, middleware-level validation, and role-based route guards
 - **Relational data modelling** — 11 tables with one-to-one, one-to-many, and many-to-many relationships, unique constraints, and cascade deletes
 - **Database migrations** — versioned schema changes with Alembic so the DB can be reproduced on any machine
 - **File upload handling** — secure multipart uploads with MIME and size validation, UUID-based file naming, and static file serving
@@ -39,13 +41,9 @@ This project is a full-stack, two-sided marketplace built entirely from scratch.
 
 ## What You Need to Install
 
-### Node.js
-
-Node.js is the only thing you need to run the interface.
-
-1. Go to [https://nodejs.org](https://nodejs.org)
-2. Click the big green **"LTS"** button to download
-3. Open the downloaded file and follow the installer (keep clicking Next/Accept until it's done)
+- **Node.js** (LTS) — [nodejs.org](https://nodejs.org)
+- **Python 3.10+** — [python.org](https://www.python.org/downloads/)
+- **PostgreSQL 15+** — [postgresql.org](https://www.postgresql.org/download/)
 
 ---
 
@@ -58,34 +56,67 @@ Node.js is the only thing you need to run the interface.
 
 ## Setup (do this only once)
 
-Open a terminal, navigate to the project folder, and run:
+### 1. Environment variables
+
+Create a file called `.env` at the root of the project with the following content:
 
 ```
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/onboard
+SECRET_KEY=replace-with-a-long-random-string
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
+
+Replace `yourpassword` with your PostgreSQL password and create a database named `onboard` (or change the name in the URL).
+
+### 2. Backend
+
+```bash
+cd backend
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+# Mac / Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+alembic upgrade head
+```
+
+### 3. Frontend
+
+From the **repo root**:
+
+```bash
 npm install
 ```
-
-For example on Windows, if the folder is on the Desktop:
-```
-cd C:\Users\YourName\Desktop\OnBoard
-npm install
-```
-
-This downloads everything the project needs. Wait until it finishes.
 
 ---
 
 ## How to Run
 
-Every time you want to open the app, navigate to the project folder in a terminal and run:
+You need two terminals open — one for each side.
 
+### Backend (terminal 1)
+
+```bash
+cd backend
+venv\Scripts\activate   # or: source venv/bin/activate on Mac/Linux
+uvicorn app.main:app --reload
 ```
+
+API runs at `http://localhost:8000`.  
+Interactive API docs (Swagger UI): `http://localhost:8000/docs`
+
+### Frontend (terminal 2)
+
+From the repo root:
+
+```bash
 npm run dev
 ```
 
-Then open your browser and go to:
+Open `http://localhost:5173` in your browser.
 
-```
-http://localhost:5173
-```
-
-To stop it, go back to the terminal and press `Ctrl + C`.
+To stop either server, press `Ctrl + C` in its terminal.
