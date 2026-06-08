@@ -36,3 +36,16 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code (AI assistant config — may contain project context or keys)
+CLAUDE.md
+.claude/
+
+# Secret / key files
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+*secret*
+*credentials*

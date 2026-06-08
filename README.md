@@ -3,6 +3,40 @@
 
 ---
 
+## Tech Stack
+
+### Backend
+- **FastAPI** — REST API with automatic OpenAPI/Swagger docs
+- **SQLAlchemy 2.0** — ORM with a relational data model across 11 tables
+- **Alembic** — database migrations
+- **PostgreSQL** — primary database
+- **JWT (HS256)** — stateless authentication with role-based access control (owner / crew / admin)
+- **bcrypt / passlib** — password hashing
+- File upload pipeline with MIME-type validation and on-disk storage
+
+### Frontend
+- **React 18 + TypeScript** — component-driven UI
+- **Vite** — build tooling
+- **TailwindCSS** — utility-first styling with a custom design token system
+- **React Router v6** — client-side routing with auth and role guards
+
+---
+
+## What I Built & Learned
+
+This project is a full-stack, two-sided marketplace built entirely from scratch. The emphasis was on backend and API development:
+
+- **Designed a REST API from scratch** — resource naming, HTTP semantics, status codes, and a clear contract between the frontend and backend via Pydantic schemas
+- **JWT authentication flow** — token issuance on login/register, middleware-level validation, and role-based route guards (`require_owner`, `require_crew`, `require_admin`)
+- **Relational data modelling** — 11 tables with one-to-one, one-to-many, and many-to-many relationships, unique constraints, and cascade deletes
+- **Database migrations** — versioned schema changes with Alembic so the DB can be reproduced on any machine
+- **File upload handling** — secure multipart uploads with MIME and size validation, UUID-based file naming, and static file serving
+- **Two-sided marketplace logic** — matching algorithm that compares availability schedules between job postings and crew listings
+- **Polling-based notifications** — the frontend polls the API every ~20 s to surface unread messages and new application events
+- **Full-stack integration** — wiring a TypeScript fetch client to a FastAPI backend, handling auth headers, and keeping Pydantic schemas in sync with frontend TypeScript interfaces
+
+---
+
 ## What You Need to Install
 
 ### Node.js
